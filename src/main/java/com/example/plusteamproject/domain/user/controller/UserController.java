@@ -26,7 +26,7 @@ public class UserController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiResponse<>("회원가입이 완료되었습니다.", null));
+                .body(new ApiResponse<>("회원가입이 완료되었습니다."));
     }
 
 
