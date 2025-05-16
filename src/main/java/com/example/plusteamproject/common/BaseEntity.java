@@ -18,11 +18,11 @@ public class BaseEntity {
     @CreatedDate // 생성시 자동입력
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime modifiedTime;
+    private LocalDateTime modifiedAt;
 }
 

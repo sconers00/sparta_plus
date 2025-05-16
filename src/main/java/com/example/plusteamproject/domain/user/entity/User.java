@@ -28,9 +28,9 @@ public class User extends BaseEntity {
 
     private String phone;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime modifiedTime;
+    private LocalDateTime modifiedAt;
 
     public User(CreateUserRequestDto requestDto) {
         this.email = requestDto.getEmail();
