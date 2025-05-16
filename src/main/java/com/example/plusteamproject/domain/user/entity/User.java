@@ -30,7 +30,7 @@ public class User extends BaseEntity {
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
 
     public User(CreateUserRequestDto requestDto) {
         this.email = requestDto.getEmail();
