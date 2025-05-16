@@ -1,4 +1,4 @@
-package com.example.plusteamproject.domain.common;
+package com.example.plusteamproject.common.commonEntity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
