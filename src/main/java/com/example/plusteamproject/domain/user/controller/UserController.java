@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/singup")
+    @PostMapping("/signup")
     public ResponseEntity<ApiResponse<Void>> createUser(@PathVariable @Valid CreateUserRequestDto requestDto) {
 
         userService.createUser(requestDto);
@@ -27,6 +27,11 @@ public class UserController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiResponse<>("회원가입이 완료되었습니다."));
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<ApiResponse<String>> login() {
+        return null;
     }
 
 

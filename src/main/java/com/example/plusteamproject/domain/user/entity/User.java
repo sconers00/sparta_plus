@@ -24,14 +24,18 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role userRole;
 
     private LocalDateTime createdAt;
 
@@ -43,5 +47,6 @@ public class User extends BaseEntity {
         this.nickname = requestDto.getNickname();
         this.password = requestDto.getPassword();
         this.phone = requestDto.getPhone();
+        this.userRole = requestDto.getUserRole();
     }
 }

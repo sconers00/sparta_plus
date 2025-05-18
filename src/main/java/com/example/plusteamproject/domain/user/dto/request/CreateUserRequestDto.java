@@ -1,5 +1,6 @@
 package com.example.plusteamproject.domain.user.dto.request;
 
+import com.example.plusteamproject.domain.user.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -30,4 +31,7 @@ public class CreateUserRequestDto {
     @NotBlank(message = "전화번호를 입력해주세요.")
     @Pattern(regexp = "^010\\d{8}$", message = "올바르지 않은 전화번호입니다.")
     private final String phone;
+
+    @NotBlank(message = "사용자 역할을 입력해주세요.")
+    private final Role userRole;
 }
