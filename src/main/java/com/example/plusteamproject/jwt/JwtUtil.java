@@ -1,5 +1,6 @@
 package com.example.plusteamproject.jwt;
 
+import com.example.plusteamproject.domain.user.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +16,7 @@ public class JwtUtil {
     private final String secretKey = "f7W!x9K@#b3R$y2UvZ6*MdQ!eK4^LpWs8GjN&ZuXtVqErJoBc1HsTmCz";
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, Role role) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role)
