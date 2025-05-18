@@ -5,6 +5,7 @@ import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -21,15 +22,18 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Setter
     @Column(nullable = false)
     private String name;
 
+    @Setter
     @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
     private String password;
 
+    @Setter
     @Column(nullable = false, unique = true)
     private String phone;
 
@@ -49,4 +53,9 @@ public class User extends BaseEntity {
         this.phone = requestDto.getPhone();
         this.userRole = Role.valueOf(requestDto.getUserRole());
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
 }

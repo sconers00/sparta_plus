@@ -3,6 +3,7 @@ package com.example.plusteamproject.domain.user.controller;
 import com.example.plusteamproject.common.ApiResponse;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.LoginUserRequestDto;
+import com.example.plusteamproject.domain.user.dto.request.UpdateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.response.FindUserResponseDto;
 import com.example.plusteamproject.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -47,6 +48,17 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(new ApiResponse<>("정보를 조회합니다.", responseDto));
     }
+
+    @PatchMapping
+    public ResponseEntity<ApiResponse<Void>> updateUser(@RequestHeader String token, @RequestBody UpdateUserRequestDto requestDto) {
+
+        userService.updateUser(token, requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>("회원 정보 수정에 성공했습니다."));
+    }
+
 
 
 }
