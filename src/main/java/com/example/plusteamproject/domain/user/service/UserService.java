@@ -1,7 +1,9 @@
 package com.example.plusteamproject.domain.user.service;
 
+import com.example.plusteamproject.common.TokenUserConverter;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.LoginUserRequestDto;
+import com.example.plusteamproject.domain.user.dto.response.FindUserResponseDto;
 import com.example.plusteamproject.domain.user.entity.User;
 import com.example.plusteamproject.domain.user.repository.UserRepository;
 import com.example.plusteamproject.jwt.JwtUtil;
@@ -17,6 +19,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final TokenUserConverter converter;
 
     @Transactional
     public void createUser(CreateUserRequestDto requestDto) {
@@ -34,5 +37,12 @@ public class UserService {
         }
 
         return jwtUtil.generateToken(user.getEmail(), user.getUserRole());
+    }
+
+    public FindUserResponseDto findUserByToken(String token) {
+
+        User user = converter.getUser(token);
+
+        return new FindUserResponseDto(user);
     }
 }

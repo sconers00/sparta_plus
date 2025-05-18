@@ -37,4 +37,9 @@ public class JwtUtil {
             return null; //커스텀예외 만들어서 예외처리 해줘야함 ! !
         }
     }
+
+    public String extractEmail(String token) {
+        Claims claims = validateToken(token);
+        return claims.getSubject();
+    }
 }

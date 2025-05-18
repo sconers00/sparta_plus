@@ -1,6 +1,5 @@
 package com.example.plusteamproject.domain.user.dto.request;
 
-import com.example.plusteamproject.domain.user.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

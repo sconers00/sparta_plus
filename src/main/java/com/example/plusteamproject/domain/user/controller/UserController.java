@@ -3,6 +3,7 @@ package com.example.plusteamproject.domain.user.controller;
 import com.example.plusteamproject.common.ApiResponse;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.LoginUserRequestDto;
+import com.example.plusteamproject.domain.user.dto.response.FindUserResponseDto;
 import com.example.plusteamproject.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +35,18 @@ public class UserController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiResponse<>(token));
+                .body(new ApiResponse<>("로그인에 성공했습니다.", token));
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<FindUserResponseDto>> findUser(@RequestHeader String token) {
+
+        FindUserResponseDto responseDto = userService.findUserByToken(token);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>("정보를 조회합니다.", responseDto));
+    }
 
 
 }
