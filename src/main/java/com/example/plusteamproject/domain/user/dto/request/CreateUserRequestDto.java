@@ -24,9 +24,10 @@ public class CreateUserRequestDto {
     private final String nickname;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,20}$", message = "비밀번호는 8~20자의 영문과 숫자를 포함해야 합니다.")
     private final String password;
 
     @NotBlank(message = "전화번호를 입력해주세요.")
-    @Pattern(regexp = "^010\\\\d{8}$", message = "올바르지 않은 전화번호입니다.")
+    @Pattern(regexp = "^010\\d{8}$", message = "올바르지 않은 전화번호입니다.")
     private final String phone;
 }
