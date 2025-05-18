@@ -59,6 +59,14 @@ public class UserController {
                 .body(new ApiResponse<>("회원 정보 수정에 성공했습니다."));
     }
 
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@RequestHeader String token) {
 
+        userService.deleteUser(token);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse<>("회원 삭제에 성공했습니다."));
+    }
 
 }

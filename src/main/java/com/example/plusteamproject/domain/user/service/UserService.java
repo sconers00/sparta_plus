@@ -72,4 +72,12 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    @Transactional
+    public void deleteUser(String token) {
+
+        User user = converter.getUser(token);
+        userRepository.delete(user);
+
+    }
 }
