@@ -21,6 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    //회원가입
     @Transactional
     public void createUser(CreateUserRequestDto requestDto) {
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -28,6 +29,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    //로그인
     @Transactional(readOnly = true)
     public String loginUser(LoginUserRequestDto requestDto) {
 
@@ -40,6 +42,7 @@ public class UserService {
         return jwtUtil.generateToken(user.getEmail(), user.getUserRole());
     }
 
+    //사용자 정보 조회
     @Transactional(readOnly = true)
     public FindUserResponseDto findUserByToken(CustomUserDetail userDetail) {
         User user = userDetail.getUser();
@@ -47,6 +50,7 @@ public class UserService {
         return new FindUserResponseDto(user);
     }
 
+    //사용자 정보 수정
     @Transactional
     public void updateUser(CustomUserDetail userDetail, UpdateUserRequestDto requestDto) {
 
@@ -71,6 +75,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    //사용자 삭제
     @Transactional
     public void deleteUser(CustomUserDetail userDetail) {
 
