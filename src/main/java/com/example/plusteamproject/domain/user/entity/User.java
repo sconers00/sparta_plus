@@ -41,11 +41,11 @@ public class User extends BaseEntity {
 
     private LocalDateTime updatedAt;
 
-    public User(CreateUserRequestDto requestDto) {
+    public User(CreateUserRequestDto requestDto, String password) {
         this.email = requestDto.getEmail();
         this.name = requestDto.getName();
         this.nickname = requestDto.getNickname();
-        this.password = requestDto.getPassword();
+        this.password = password;
         this.phone = requestDto.getPhone();
         this.userRole = requestDto.getUserRole();
     }
