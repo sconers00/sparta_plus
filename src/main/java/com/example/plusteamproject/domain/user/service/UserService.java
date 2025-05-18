@@ -27,10 +27,9 @@ public class UserService {
 
     public String loginUser(LoginUserRequestDto requestDto) {
 
-        String password = passwordEncoder.encode(requestDto.getPassword());
         User user = userRepository.findByEmailOrElseThrow(requestDto.getEmail());
 
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
 

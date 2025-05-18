@@ -47,6 +47,6 @@ public class User extends BaseEntity {
         this.nickname = requestDto.getNickname();
         this.password = password;
         this.phone = requestDto.getPhone();
-        this.userRole = requestDto.getUserRole();
+        this.userRole = Role.valueOf(requestDto.getUserRole());
     }
 }

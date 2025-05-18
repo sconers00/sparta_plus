@@ -33,5 +33,5 @@ public class CreateUserRequestDto {
     private final String phone;
 
     @NotBlank(message = "사용자 역할을 입력해주세요.")
-    private final Role userRole;
+    private final String userRole;
 }
