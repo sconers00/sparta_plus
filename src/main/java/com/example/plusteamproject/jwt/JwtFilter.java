@@ -25,13 +25,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
+
         Claims claims = jwtUtil.validateToken(token);
+        request.setAttribute("claims", claims);
 
         if (claims != null) {
             String username = claims.getSubject();

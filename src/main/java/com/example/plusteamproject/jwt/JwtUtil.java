@@ -31,15 +31,19 @@ public class JwtUtil {
             return Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                     .build()
-                    .parseClaimsJwt(token)
+                    .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException e) {
-            return null; //커스텀예외 만들어서 예외처리 해줘야함 ! !
+            return null; //예외 커스텀 해줘야함 ! ! !
         }
     }
 
     public String extractEmail(String token) {
         Claims claims = validateToken(token);
+        return claims.getSubject();
+    }
+
+    public String extractEmailFromClaims(Claims claims) {
         return claims.getSubject();
     }
 }

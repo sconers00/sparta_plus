@@ -6,10 +6,12 @@ import com.example.plusteamproject.domain.user.dto.request.LoginUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.UpdateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.response.FindUserResponseDto;
 import com.example.plusteamproject.domain.user.service.UserService;
+import com.example.plusteamproject.security.CustomUserDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,9 +42,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<FindUserResponseDto>> findUser(@RequestHeader String token) {
+    public ResponseEntity<ApiResponse<FindUserResponseDto>> findUser(@AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        FindUserResponseDto responseDto = userService.findUserByToken(token);
+        FindUserResponseDto responseDto = userService.findUserByToken(userDetail);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -50,9 +52,9 @@ public class UserController {
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponse<Void>> updateUser(@RequestHeader String token, @RequestBody UpdateUserRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<Void>> updateUser(@AuthenticationPrincipal CustomUserDetail userDetail, @RequestBody UpdateUserRequestDto requestDto) {
 
-        userService.updateUser(token, requestDto);
+        userService.updateUser(userDetail, requestDto);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -60,9 +62,9 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@RequestHeader String token) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        userService.deleteUser(token);
+        userService.deleteUser(userDetail);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

@@ -1,6 +1,5 @@
 package com.example.plusteamproject.domain.user.service;
 
-import com.example.plusteamproject.common.TokenUserConverter;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.LoginUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.UpdateUserRequestDto;
@@ -8,6 +7,7 @@ import com.example.plusteamproject.domain.user.dto.response.FindUserResponseDto;
 import com.example.plusteamproject.domain.user.entity.User;
 import com.example.plusteamproject.domain.user.repository.UserRepository;
 import com.example.plusteamproject.jwt.JwtUtil;
+import com.example.plusteamproject.security.CustomUserDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final TokenUserConverter converter;
 
     @Transactional
     public void createUser(CreateUserRequestDto requestDto) {
@@ -42,17 +41,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public FindUserResponseDto findUserByToken(String token) {
-
-        User user = converter.getUser(token);
+    public FindUserResponseDto findUserByToken(CustomUserDetail userDetail) {
+        User user = userDetail.getUser();
 
         return new FindUserResponseDto(user);
     }
 
     @Transactional
-    public void updateUser(String token, UpdateUserRequestDto requestDto) {
+    public void updateUser(CustomUserDetail userDetail, UpdateUserRequestDto requestDto) {
 
-        User user = converter.getUser(token);
+        User user = userDetail.getUser();
 
         if (requestDto.getName() != null) {
             user.setName(requestDto.getName());
@@ -74,9 +72,9 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String token) {
+    public void deleteUser(CustomUserDetail userDetail) {
 
-        User user = converter.getUser(token);
+        User user = userDetail.getUser();
         userRepository.delete(user);
 
     }
