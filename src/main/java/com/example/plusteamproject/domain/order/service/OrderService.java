@@ -2,6 +2,8 @@ package com.example.plusteamproject.domain.order.service;
 
 import static org.springframework.util.ObjectUtils.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,10 +35,11 @@ public class OrderService {
 
 	public OrderResponseDto saveOrder(OrderRequestDto dto, CustomUserDetail userDetail) {
 		User user = userDetail.getUser();
-		Product product = (Product)productRepository.findById(dto.getProductId())
+		Product product = productRepository.findById(dto.getProductId().getId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), dto.getQuantity()*product.getPrice(), dto.getAddress(), "PENDING", user,product);
+		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), product.getPrice().multiply(
+			BigDecimal.valueOf(dto.getQuantity())), dto.getAddress(), OrderStatus.valueOf("PENDING"), user,product);
 		orderRepository.save(order);
 		return orderReturn(order);
 	}
@@ -62,7 +65,7 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		if(!order.getOrderStatus().equals(OrderStatus.valueOf("PENDING")))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
-		Product product = (Product)productRepository.findById(dto.getProductId())
+		Product product = productRepository.findById(dto.getProductId().getId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		if(dto.getPaymentMethod()!=null)
 			order.setPaymentMethod(dto.getPaymentMethod());
@@ -73,7 +76,7 @@ public class OrderService {
 		if(dto.getProductId()!=null)
 			order.setProductId(dto.getProductId());
 		Assert.isTrue(isEmpty(dto.getQuantity()),"NPE위험요소체크");
-		order.setTotalPrice(dto.getQuantity()*product.getPrice());
+		order.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity())));
 		orderRepository.save(order);
 	}
 
@@ -90,7 +93,7 @@ public class OrderService {
 	public OrderStatusDto findOrderStatus(Long orderId, CustomUserDetail userDetail) {
 		User user = userDetail.getUser();
 		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		if(!Objects.equals(user.getId(),order.getProductId().getUserId().getId())
+		if(!Objects.equals(user.getId(),order.getProductId().getUser().getId())
 			&&!Objects.equals(user.getId(),order.getUserId().getId()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		return orderStatusReturn(order);
@@ -99,7 +102,7 @@ public class OrderService {
 	public OrderStatusDto updateOrderStatus(OrderStatusDto dto, CustomUserDetail userDetail) {
 		User user = userDetail.getUser();
 		Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		if(!Objects.equals(user.getId(),order.getProductId().getUserId().getId())
+		if(!Objects.equals(user.getId(),order.getProductId().getUser().getId())
 			&&!Objects.equals(user.getId(),order.getUserId().getId()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		if((order.getOrderStatus()).equals(OrderStatus.valueOf("ARRIVED")))
@@ -114,7 +117,7 @@ public class OrderService {
 			order.getOrderId(),
 			order.getPaymentMethod(),
 			order.getQuantity(),
-			order.getTotalPrice(),
+			new BigDecimal(String.valueOf(order.getTotalPrice())),
 			order.getAddress(),
 			order.getOrderStatus(),
 			order.getUserId().getId(),
@@ -125,7 +128,7 @@ public class OrderService {
 		return new OrderStatusDto(
 			order.getOrderId(),
 			order.getProductId().getId(),
-			order.getOrderStatus()
+			order.getOrderStatus().toString()
 		);
 	}
 }
