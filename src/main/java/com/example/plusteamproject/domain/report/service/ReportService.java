@@ -36,7 +36,7 @@ public class ReportService {
 
 	Long userId = userDetail.getUser().getId();
 
-	boolean exists = reportRepository.existsByUser_Id(userId);
+	boolean exists = reportRepository.existsByUser_IdAndProduct_Id(userId, productId);
 	if (exists) {
 		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자님께서는 이미 해당 제품에 대해 신고하셨습니다.");
 	}
