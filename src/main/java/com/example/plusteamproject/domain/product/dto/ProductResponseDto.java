@@ -1,6 +1,7 @@
 package com.example.plusteamproject.domain.product.dto;
 
 
+import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.entity.ProductCategory;
 import lombok.Getter;
 
@@ -25,5 +26,14 @@ public class ProductResponseDto {
         this.content = content;
         this.price = price;
         this.quantity = quantity;
+    }
+    public ProductResponseDto(Product product) {
+        this.id = product.getId();
+        this.userId =product.getUser().getId();
+        this.productCategory = product.getCategory();
+        this.name = product.getName();
+        this.content = product.getContent();
+        this.price = product.getPrice();
+        this.quantity = product.getQuantity();
     }
 }

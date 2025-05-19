@@ -1,12 +1,16 @@
 package com.example.plusteamproject.domain.product.controller;
 
 import com.example.plusteamproject.common.ApiResponse;
+import com.example.plusteamproject.domain.product.dto.ProductListResponseDto;
 import com.example.plusteamproject.domain.product.dto.ProductResponseDto;
 import com.example.plusteamproject.domain.product.dto.ProductSaveRequestDto;
 import com.example.plusteamproject.domain.product.dto.ProductUpdateRequestDto;
+import com.example.plusteamproject.domain.product.entity.ProductCategory;
 import com.example.plusteamproject.domain.product.service.ProductService;
 import com.example.plusteamproject.security.CustomUserDetail;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,6 +41,17 @@ public class ProductController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(new ApiResponse<>("제품의 상세정보 입니다.",productService.getProduct(productId)));
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<ApiResponse<Slice<ProductListResponseDto>>>findCursorProductBySizeAndCategory(
+        @RequestParam(required = false)ProductCategory category,
+        @RequestParam(required = false)Long lastId,
+        @RequestParam(defaultValue = "5") int size){
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(new ApiResponse<>(category.getDisplayName()+" 목록 입니다.",productService.findCursorProductBySizeAndCategory(category,lastId,size)));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
