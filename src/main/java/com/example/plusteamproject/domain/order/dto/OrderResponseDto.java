@@ -1,5 +1,7 @@
 package com.example.plusteamproject.domain.order.dto;
 
+import java.math.BigDecimal;
+
 import com.example.plusteamproject.domain.order.entity.Order;
 import com.example.plusteamproject.domain.order.entity.OrderStatus;
 
@@ -10,12 +12,12 @@ public class OrderResponseDto {
 	private final Long orderId;
 	private final String paymentMethod;
 	private final Long quantity;
-	private final Long totalPrice;
+	private final BigDecimal totalPrice;
 	private final String address;
 	private final OrderStatus orderStatus;
 	private final Long userId;
 	private final Long productId;
-	public OrderResponseDto(Long orderId, String paymentMethod, Long quantity, Long totalPrice, String address, OrderStatus orderStatus, Long userId, Long productId){
+	public OrderResponseDto(Long orderId, String paymentMethod, Long quantity, BigDecimal totalPrice, String address, OrderStatus orderStatus, Long userId, Long productId){
 		this.orderId=orderId;
 		this.paymentMethod=paymentMethod;
 		this.quantity=quantity;

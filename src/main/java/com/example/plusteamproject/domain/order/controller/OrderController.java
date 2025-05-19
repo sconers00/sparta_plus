@@ -24,6 +24,7 @@ import com.example.plusteamproject.domain.order.entity.OrderStatus;
 import com.example.plusteamproject.domain.order.service.OrderService;
 import com.example.plusteamproject.security.CustomUserDetail;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderController {
 	private final OrderService orderService;
 	@PostMapping
-	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(@RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		OrderResponseDto orderResponseDto = orderService.saveOrder(dto, userDetail);
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
@@ -55,7 +56,7 @@ public class OrderController {
 	}
 
 	@PatchMapping("/{order_id}")
-	public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Long order_id, @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+	public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		orderService.updateOrder(order_id, dto,userDetail);
 		return ResponseEntity
 			.status(HttpStatus.OK)
@@ -79,7 +80,7 @@ public class OrderController {
 	}
 
 	@PatchMapping("/status")
-	public ResponseEntity<ApiResponse<OrderStatusDto>> updateOrderStatus(@RequestBody OrderStatusDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+	public ResponseEntity<ApiResponse<OrderStatusDto>> updateOrderStatus(@Valid @RequestBody OrderStatusDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		enumChecker(dto);
 		OrderStatusDto orderStatusDto = orderService.updateOrderStatus(dto, userDetail);
 		return ResponseEntity
