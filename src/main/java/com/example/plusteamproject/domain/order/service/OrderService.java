@@ -36,7 +36,7 @@ public class OrderService {
 		Product product = (Product)productRepository.findById(dto.getProductId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), dto.getQuantity()*product.getPrice(), dto.getAddress(), OrderStatus.PENDING, user,product);
+		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), dto.getQuantity()*product.getPrice(), dto.getAddress(), "PENDING", user,product);
 		orderRepository.save(order);
 		return orderReturn(order);
 	}
@@ -60,7 +60,7 @@ public class OrderService {
 		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		if(!Objects.equals(user.getId(),order.getUserId().getId()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		if(order.getOrderStatus()!=OrderStatus.PENDING)
+		if(!order.getOrderStatus().equals(OrderStatus.valueOf("PENDING")))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
 		Product product = (Product)productRepository.findById(dto.getProductId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -72,7 +72,7 @@ public class OrderService {
 			order.setAddress(dto.getAddress());
 		if(dto.getProductId()!=null)
 			order.setProductId(dto.getProductId());
-		Assert.isTrue(isEmpty(dto.getQuantity()),"NPE위험요소발생");
+		Assert.isTrue(isEmpty(dto.getQuantity()),"NPE위험요소체크");
 		order.setTotalPrice(dto.getQuantity()*product.getPrice());
 		orderRepository.save(order);
 	}
@@ -82,7 +82,7 @@ public class OrderService {
 		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		if(!Objects.equals(user.getId(),order.getUserId().getId()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		if(order.getOrderStatus()!=OrderStatus.PENDING)
+		if(!order.getOrderStatus().equals(OrderStatus.valueOf("PENDING")))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 취소 불가.
 		orderRepository.deleteById(orderId);
 	}
@@ -102,10 +102,10 @@ public class OrderService {
 		if(!Objects.equals(user.getId(),order.getProductId().getUserId().getId())
 			&&!Objects.equals(user.getId(),order.getUserId().getId()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		if((order.getOrderStatus())==OrderStatus.ARRIVED)
+		if((order.getOrderStatus()).equals(OrderStatus.valueOf("ARRIVED")))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		if(dto.getOrderStatus()!=null)
-			order.setOrderStatus(dto.getOrderStatus());
+			order.setOrderStatus(OrderStatus.valueOf(dto.getOrderStatus()));
 		orderRepository.save(order);
 		return orderStatusReturn(order);
 	}

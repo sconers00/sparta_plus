@@ -15,9 +15,9 @@ public class OrderStatusDto {
 	private final Long productId;
 	@Setter
 	@NotBlank
-	private final OrderStatus orderStatus;
+	private final String orderStatus;
 
-	public OrderStatusDto(Long orderId, Long productId, OrderStatus orderStatus){
+	public OrderStatusDto(Long orderId, Long productId, String orderStatus){
 		this.orderId=orderId;
 		this.productId=productId;
 		this.orderStatus=orderStatus;

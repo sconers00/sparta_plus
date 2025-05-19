@@ -14,20 +14,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.plusteamproject.common.ApiResponse;
 import com.example.plusteamproject.domain.order.dto.OrderRequestDto;
 import com.example.plusteamproject.domain.order.dto.OrderResponseDto;
 import com.example.plusteamproject.domain.order.dto.OrderStatusDto;
+import com.example.plusteamproject.domain.order.entity.OrderStatus;
 import com.example.plusteamproject.domain.order.service.OrderService;
 import com.example.plusteamproject.security.CustomUserDetail;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/orders")
 @Validated
+@Slf4j
 public class OrderController {
 	private final OrderService orderService;
 	@PostMapping
@@ -76,9 +80,17 @@ public class OrderController {
 
 	@PatchMapping("/status")
 	public ResponseEntity<ApiResponse<OrderStatusDto>> updateOrderStatus(@RequestBody OrderStatusDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+		enumChecker(dto);
 		OrderStatusDto orderStatusDto = orderService.updateOrderStatus(dto, userDetail);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(new ApiResponse<>("주문 상태가 수정되었습니다.",orderStatusDto));
+	}
+
+	public void enumChecker(OrderStatusDto dto){
+		try{OrderStatus orderStatus =OrderStatus.valueOf(dto.getOrderStatus());
+		}catch(IllegalArgumentException e){
+			log.warn("주문상태 dto 내용 식별 실패. dto가 잘못 작성되었거나 검증로직 오류.");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);}
 	}
 }
