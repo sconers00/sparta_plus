@@ -1,14 +1,11 @@
 package com.example.plusteamproject.domain.report.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import com.example.plusteamproject.domain.report.entity.Report;
-import com.example.plusteamproject.domain.user.entity.User;
 
 public interface ReportRepository extends JpaRepository <Report, Long> {
 
@@ -24,4 +21,5 @@ public interface ReportRepository extends JpaRepository <Report, Long> {
 	@EntityGraph(attributePaths = {"reporter", "product"})
 	List<Report> findByProduct_Id(Long productId);
 
+	boolean existsByUser_Id(Long userId);
 }
