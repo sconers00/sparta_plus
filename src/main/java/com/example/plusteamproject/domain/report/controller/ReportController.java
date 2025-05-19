@@ -24,7 +24,8 @@ public class ReportController {
 	public ResponseEntity<?> createReport(
 		@PathVariable Long productId,
 		@RequestBody ReportRequestDto requestDto,
-		@RequestHeader("Authorization") String token) {
+		@RequestHeader("Authorization") String token
+	) {
 		reportService.createReport(productId, requestDto, token);
 		return null;
 	}
