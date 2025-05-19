@@ -1,6 +1,6 @@
 package com.example.plusteamproject.domain.order.entity;
 
-import com.example.plusteamproject.common.commonEntity.BaseEntity;
+import com.example.plusteamproject.common.BaseEntity;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.user.entity.User;
 
@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
@@ -26,26 +27,31 @@ public class Order extends BaseEntity {
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	@Column(name="order_id")
 	private Long orderId;
+	@Setter
 	@Column(name="payment_method")
 	private String paymentMethod;
+	@Setter
 	@Column(name="quantity")
 	private Long quantity;
+	@Setter
 	@Column(name="total_price")
 	private Long totalPrice;
+	@Setter
 	@Column(name="address")
 	private String address;
+	@Setter
+	@Column(name="status", nullable=false, columnDefinition = "varchar(30) DEFAULT 'PENDING'")
 	@Enumerated(EnumType.STRING)
-	@Column(name="status")
 	private OrderStatus orderStatus;
 	@ManyToOne
 	@Column(name="user_id")
 	private User userId;
+	@Setter
 	@ManyToOne
 	@Column(name="product_id")
-	private Product product_id;
+	private Product productId;
 
-	public Order(Long orderId, String paymentMethod, Long quantity, Long totalPrice, String address, OrderStatus orderStatus, User userId, Product productId){
-		this.orderId=orderId;
+	public Order(String paymentMethod, Long quantity, Long totalPrice, String address, OrderStatus orderStatus, User userId, Product productId){
 		this.paymentMethod=paymentMethod;
 		this.quantity=quantity;
 		this.totalPrice=totalPrice;
@@ -53,5 +59,9 @@ public class Order extends BaseEntity {
 		this.orderStatus=orderStatus;
 		this.userId=userId;
 		this.productId=productId;
+	}
+
+	public void chageStatus(String orderStatus) {
+		this.orderStatus = OrderStatus.of(orderStatus);
 	}
 }

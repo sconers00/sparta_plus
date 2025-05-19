@@ -1,14 +1,27 @@
 package com.example.plusteamproject.domain.order.service;
 
-import org.springframework.stereotype.Service;
+import static org.springframework.util.ObjectUtils.*;
 
-import com.example.plusteamproject.domain.order.dto.OrderModifyDto;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.plusteamproject.domain.order.dto.OrderRequestDto;
 import com.example.plusteamproject.domain.order.dto.OrderResponseDto;
 import com.example.plusteamproject.domain.order.dto.OrderStatusDto;
+import com.example.plusteamproject.domain.order.entity.Order;
+import com.example.plusteamproject.domain.order.entity.OrderStatus;
 import com.example.plusteamproject.domain.order.repository.OrderRepository;
+import com.example.plusteamproject.domain.product.entity.Product;
+import com.example.plusteamproject.domain.product.repository.ProductRepository;
+import com.example.plusteamproject.domain.user.entity.User;
+import com.example.plusteamproject.security.CustomUserDetail;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,19 +29,103 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
 
 	private final OrderRepository orderRepository;
+	private final ProductRepository productRepository;
 
-	public static OrderResponseDto save(OrderRequestDto dto, HttpServletRequest request) {
+	public OrderResponseDto saveOrder(OrderRequestDto dto, CustomUserDetail userDetail) {
+		User user = userDetail.getUser();
+		Product product = (Product)productRepository.findById(dto.getProductId())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), dto.getQuantity()*product.getPrice(), dto.getAddress(), OrderStatus.PENDING, user,product);
+		orderRepository.save(order);
+		return orderReturn(order);
 	}
 
-	public static OrderModifyDto updateOrder(Long orderId, OrderModifyDto dto, HttpServletRequest request) {
+	public List<OrderResponseDto> findByUserId(CustomUserDetail userDetail) {//사용자의 모든 주문 조회(로그인정보기반)
+		User user = userDetail.getUser();
+		List<Order> orderList= orderRepository.findByUserId(user.getId());
+		return orderList.stream().map(OrderResponseDto::toDto).collect(Collectors.toList());
 	}
 
-	public static void deleteOrder(Long orderId, HttpServletRequest request) {
+	public OrderResponseDto findById(Long orderId, CustomUserDetail userDetail) {//사용자의 특정 주문 조회(로그인정보+url)
+		User user = userDetail.getUser();
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(!Objects.equals(user.getId(), order.getUserId().getId()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);//주문자 본인만 조회 가능
+		return orderReturn(order);
 	}
 
-	public static OrderStatusDto findOrderStatus(Long orderId, HttpServletRequest request) {
+	public void updateOrder(Long orderId, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
+		User user = userDetail.getUser();
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(!Objects.equals(user.getId(),order.getUserId().getId()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		if(order.getOrderStatus()!=OrderStatus.PENDING)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
+		Product product = (Product)productRepository.findById(dto.getProductId())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(dto.getPaymentMethod()!=null)
+			order.setPaymentMethod(dto.getPaymentMethod());
+		if(dto.getQuantity()!=null)
+			order.setQuantity(dto.getQuantity());
+		if(dto.getAddress()!=null)
+			order.setAddress(dto.getAddress());
+		if(dto.getProductId()!=null)
+			order.setProductId(dto.getProductId());
+		Assert.isTrue(isEmpty(dto.getQuantity()),"NPE위험요소발생");
+		order.setTotalPrice(dto.getQuantity()*product.getPrice());
+		orderRepository.save(order);
 	}
 
-	public static OrderStatusDto updateOrderStatus(OrderStatusDto dto, HttpServletRequest request) {
+	public void deleteOrder(Long orderId, CustomUserDetail userDetail) {//하드딜리트, 주문자 본인만 주문 취소 가능.
+		User user = userDetail.getUser();
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(!Objects.equals(user.getId(),order.getUserId().getId()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		if(order.getOrderStatus()!=OrderStatus.PENDING)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 취소 불가.
+		orderRepository.deleteById(orderId);
+	}
+
+	public OrderStatusDto findOrderStatus(Long orderId, CustomUserDetail userDetail) {
+		User user = userDetail.getUser();
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(!Objects.equals(user.getId(),order.getProductId().getUserId().getId())
+			&&!Objects.equals(user.getId(),order.getUserId().getId()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		return orderStatusReturn(order);
+	}
+
+	public OrderStatusDto updateOrderStatus(OrderStatusDto dto, CustomUserDetail userDetail) {
+		User user = userDetail.getUser();
+		Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(!Objects.equals(user.getId(),order.getProductId().getUserId().getId())
+			&&!Objects.equals(user.getId(),order.getUserId().getId()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		if((order.getOrderStatus())==OrderStatus.ARRIVED)
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		if(dto.getOrderStatus()!=null)
+			order.setOrderStatus(dto.getOrderStatus());
+		orderRepository.save(order);
+		return orderStatusReturn(order);
+	}
+	public OrderResponseDto orderReturn(Order order){//주문반환기
+		return new OrderResponseDto(
+			order.getOrderId(),
+			order.getPaymentMethod(),
+			order.getQuantity(),
+			order.getTotalPrice(),
+			order.getAddress(),
+			order.getOrderStatus(),
+			order.getUserId().getId(),
+			order.getProductId().getId()
+		);
+	}
+	public OrderStatusDto orderStatusReturn(Order order){//주문상태 반환기
+		return new OrderStatusDto(
+			order.getOrderId(),
+			order.getProductId().getId(),
+			order.getOrderStatus()
+		);
 	}
 }
