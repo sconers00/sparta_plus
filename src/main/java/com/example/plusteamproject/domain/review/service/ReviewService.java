@@ -7,7 +7,11 @@ import com.example.plusteamproject.domain.review.dto.response.ReviewResponseDto;
 import com.example.plusteamproject.domain.review.entity.Review;
 import com.example.plusteamproject.domain.review.entity.SortType;
 import com.example.plusteamproject.domain.review.repository.ReviewRepository;
+import com.example.plusteamproject.domain.user.entity.User;
+import com.example.plusteamproject.domain.user.repository.UserRepository;
+import com.example.plusteamproject.security.CustomUserDetail;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +24,16 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ReviewResponseDto saveReview(Long tempUserId, Long tempOrderId, ReviewRequestDto dto) {
-        
+    public ReviewResponseDto saveReview(CustomUserDetail userDetail, Long tempOrderId, ReviewRequestDto dto) {
+
+        User user = userDetail.getUser();
+
         // TODO: 주문 NOT FOUND 예외처리
-        
-        // TODO: 유저 NOT FOUND 예외처리
-        
+
         // TODO: 본인의 주문인지 확인
 
         // TODO: 배송완료?
@@ -36,7 +42,7 @@ public class ReviewService {
 
         Long tempProductId = 1L;
 
-        Review review = new Review(dto.getContent(), dto.getScore(), tempUserId, tempOrderId, tempProductId);
+        Review review = new Review(dto.getContent(), dto.getScore(), user.getId(), tempOrderId, tempProductId);
 
         Review saved = reviewRepository.save(review);
 
@@ -62,12 +68,12 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponseDto updateReview(Long tempUserId, Long reviewId, ReviewRequestDto dto) {
+    public ReviewResponseDto updateReview(CustomUserDetail userDetail, Long reviewId, ReviewRequestDto dto) {
+
+        User user = userDetail.getUser();
 
         // 해당 리뷰가 없으면 예외처리
         Review review = getReviewByReviewId(reviewId);
-
-        // TODO: 유저 NOT FOUND 예외처리
 
         // TODO: 본인의 리뷰인지 확인
 
@@ -78,25 +84,22 @@ public class ReviewService {
         return new ReviewResponseDto(review);
     }
 
-    public void deleteReview(Long tempUserId, Long reviewId, DeleteReviewRequestDto dto) {
+    public void deleteReview(CustomUserDetail userDetail, Long reviewId, DeleteReviewRequestDto dto) {
+
+        User user = userDetail.getUser();
 
         // 해당 리뷰가 없으면 예외처리
         Review review = getReviewByReviewId(reviewId);
 
-        // TODO: 유저 NOT FOUND 예외처리
-
         // TODO: 본인의 리뷰인지 확인
 
-        // TODO: 비밀번호 일치 검증 유저 + 인증인가 후 수정
-        String tempPassword = "1234";
-        validMatchingPassword(tempPassword, dto.getPassword());
+        validMatchingPassword(dto.getPassword(), user.getPassword());
 
         reviewRepository.delete(review);
     }
     
-    public void validMatchingPassword(String password, String inputPassword) {
-        // TODO: 인코더로 변경
-        if (!password.equals(inputPassword)) {
+    public void validMatchingPassword(String inputPassword, String password) {
+        if (!passwordEncoder.matches(inputPassword, password)) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
     }

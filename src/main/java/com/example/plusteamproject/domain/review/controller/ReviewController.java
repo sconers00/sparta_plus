@@ -7,10 +7,12 @@ import com.example.plusteamproject.domain.review.dto.response.ReviewListResponse
 import com.example.plusteamproject.domain.review.dto.response.ReviewResponseDto;
 import com.example.plusteamproject.domain.review.entity.SortType;
 import com.example.plusteamproject.domain.review.service.ReviewService;
+import com.example.plusteamproject.security.CustomUserDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,12 +22,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/orders/{orderId}/reviews")
-    public ResponseEntity<ApiResponse<ReviewResponseDto>> saveReview(@PathVariable Long orderId, @Valid @RequestBody ReviewRequestDto dto) {
+    public ResponseEntity<ApiResponse<ReviewResponseDto>> saveReview(@PathVariable Long orderId, @Valid @RequestBody ReviewRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        // TODO: 인증인가 후 변경
-        Long tempUserId = 1L;
-
-        ReviewResponseDto savedReview = reviewService.saveReview(tempUserId, orderId, dto);
+        ReviewResponseDto savedReview = reviewService.saveReview(userDetail, orderId, dto);
 
         ApiResponse<ReviewResponseDto> apiResponse = new ApiResponse<>("리뷰 작성이 완료되었습니다.", savedReview);
 
@@ -34,9 +33,6 @@ public class ReviewController {
 
     @GetMapping("/products/{productId}/reviews")
     public ResponseEntity<ApiResponse<ReviewListResponseDto>> getStoreReviews(@PathVariable Long productId, @RequestParam(defaultValue = "latest") String sort) {
-
-        // TODO: 인증인가 후 변경
-        Long tempUserId = 1L;
 
         SortType sortType = SortType.from(sort);
         ReviewListResponseDto getReviewsList = reviewService.getReviewsByProductId(productId, sortType);
@@ -47,12 +43,9 @@ public class ReviewController {
     }
 
     @PatchMapping("/reviews/{reviewId}")
-    public ResponseEntity<ApiResponse<ReviewResponseDto>> updateReview(@PathVariable Long reviewId, @Valid @RequestBody ReviewRequestDto dto) {
+    public ResponseEntity<ApiResponse<ReviewResponseDto>> updateReview(@PathVariable Long reviewId, @Valid @RequestBody ReviewRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        // TODO: 인증인가 후 변경
-        Long tempUserId = 1L;
-
-        ReviewResponseDto updatedReview = reviewService.updateReview(tempUserId, reviewId, dto);
+        ReviewResponseDto updatedReview = reviewService.updateReview(userDetail, reviewId, dto);
 
         ApiResponse<ReviewResponseDto> apiResponse = new ApiResponse<>("리뷰 수정이 완료되었습니다.", updatedReview);
 
@@ -60,12 +53,9 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{reviewId}")
-    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId, @Valid @RequestBody DeleteReviewRequestDto dto) {
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId, @Valid @RequestBody DeleteReviewRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail) {
 
-        // TODO: 인증인가 후 변경
-        Long tempUserId = 1L;
-
-        reviewService.deleteReview(tempUserId, reviewId, dto);
+        reviewService.deleteReview(userDetail, reviewId, dto);
 
         ApiResponse<Void> apiResponse = new ApiResponse<>("리뷰 삭제가 완료되었습니다.");
 
