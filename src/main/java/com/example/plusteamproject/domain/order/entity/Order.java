@@ -1,5 +1,7 @@
 package com.example.plusteamproject.domain.order.entity;
 
+import java.math.BigDecimal;
+
 import com.example.plusteamproject.common.BaseEntity;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.user.entity.User;
@@ -35,7 +37,7 @@ public class Order extends BaseEntity {
 	private Long quantity;
 	@Setter
 	@Column(name="total_price")
-	private Long totalPrice;
+	private BigDecimal totalPrice;
 	@Setter
 	@Column(name="address")
 	private String address;
@@ -51,7 +53,7 @@ public class Order extends BaseEntity {
 	@Column(name="product_id")
 	private Product productId;
 
-	public Order(String paymentMethod, Long quantity, Long totalPrice, String address, OrderStatus orderStatus, User userId, Product productId){
+	public Order(String paymentMethod, Long quantity, BigDecimal totalPrice, String address, OrderStatus orderStatus, User userId, Product productId){
 		this.paymentMethod=paymentMethod;
 		this.quantity=quantity;
 		this.totalPrice=totalPrice;
