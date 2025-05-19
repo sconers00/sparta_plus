@@ -22,8 +22,8 @@ public class ProductService {
     private final ProductRepository productRepository;
 
 
-    public ProductResponseDto createProduct(CustomUserDetail user,ProductSaveRequestDto dto) {
-        Product product = Product.of(dto.getProductCategory(), dto.getName(), dto.getContent(), dto.getPrice(), dto.getQuantity(),user.getUser());
+    public ProductResponseDto createProduct(CustomUserDetail user, ProductSaveRequestDto dto) {
+        Product product = Product.of(dto.getProductCategory(), dto.getName(), dto.getContent(), dto.getPrice(), dto.getQuantity(), user.getUser());
         Product saveProduct = productRepository.save(product);
 
         return new ProductResponseDto(saveProduct);
@@ -34,26 +34,26 @@ public class ProductService {
     public ProductResponseDto getProduct(Long productId) {
 
         Product findProduct = productRepository.getTodoByIdWithUser(productId)
-            .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
+                .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
 
         return new ProductResponseDto(findProduct);
-   }
+    }
 
 
-   public  Slice<ProductListResponseDto> findCursorProductBySizeAndCategory(ProductCategory category, Long lastId, int size) {
+    public Slice<ProductListResponseDto> findCursorProductBySizeAndCategory(ProductCategory category, Long lastId, int size) {
 
-        Pageable pageable = PageRequest.of(0,size);
+        Pageable pageable = PageRequest.of(0, size);
 
-        return productRepository.findCursorProductBySizeAndCategory(category,lastId,pageable);
+        return productRepository.findCursorProductBySizeAndCategory(category, lastId, pageable);
     }
 
 
     public ProductResponseDto updateProduct(CustomUserDetail userDetail, Long productId, ProductUpdateRequestDto dto) {
 
         Product findProduct = productRepository.getTodoByIdWithUser(productId)
-            .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
+                .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
 
-        if(userDetail.getUser().getId().equals(findProduct.getUser().getId())){
+        if (userDetail.getUser().getId().equals(findProduct.getUser().getId())) {
             findProduct.update(dto);
         } else {
             throw new RuntimeException("해당 제품의 생성자만 수정 가능합니다");
@@ -66,9 +66,9 @@ public class ProductService {
     public void deleteProduct(CustomUserDetail userDetail, Long productId) {
 
         Product findProduct = productRepository.getTodoByIdWithUser(productId)
-            .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
+                .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
 
-        if(!(userDetail.getUser().getId().equals(findProduct.getUser().getId()))){
+        if (!(userDetail.getUser().getId().equals(findProduct.getUser().getId()))) {
             throw new RuntimeException("해당 제품의 생성자만 삭제 가능합니다");
         }
 
