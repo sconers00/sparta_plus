@@ -21,8 +21,8 @@ public class ReportResponseDto {
 
 	public ReportResponseDto(Report report) {
 		this.id = report.getId();
-		this.sellerName = report.getReporter().getName(); //getProduct().getUser.getName();로 수정예정
-		this.productName = report.getReporter().getNickname(); // getProduct().getName();로 수정예정
+		this.sellerName = report.getProduct().getUser().getName();
+		this.productName = report.getProduct().getName();
 		this.reporterName = report.getReporter().getName();
 		this.reportType = report.getReportType();
 		this.content = report.getContent();
