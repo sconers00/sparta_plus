@@ -1,0 +1,2 @@
+--db 연결 설정을 먼저 진행한 후에 가능합니다. init_table에서 생성한 테이블에 집어넣을 초기값들을 여기에 적어주세요오
+-- INSERT INTO {Entity}(parm1, parm2, parm3...) Values
