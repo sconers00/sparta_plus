@@ -38,12 +38,4 @@ public class JwtUtil {
         }
     }
 
-    public String extractEmail(String token) {
-        Claims claims = validateToken(token);
-        return claims.getSubject();
-    }
-
-    public String extractEmailFromClaims(Claims claims) {
-        return claims.getSubject();
-    }
 }
