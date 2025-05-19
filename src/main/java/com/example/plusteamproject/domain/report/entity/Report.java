@@ -39,11 +39,14 @@ public class Report extends BaseEntity {
 	@JoinColumn(referencedColumnName = "user_id", name = "reportId")
 	private User reporter;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(referencedColumnName = "product_id", name = "productId")
-	// private Product product;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(referencedColumnName = "product_id", name = "productId")
+	private Product product;
 
-
-
-
+	public Report(String content, ReportType reportType, User reporter, Product product) {
+		this.content = content;
+		this.reportType = reportType;
+		this.reporter = reporter;
+		this.product = product;
+	}
 }
