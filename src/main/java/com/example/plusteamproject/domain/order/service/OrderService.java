@@ -74,7 +74,6 @@ public class OrderService {
 			order.setAddress(dto.getAddress());
 		if(dto.getProductId()!=null)
 			order.setProductId(dto.getProductId());
-		Assert.isTrue(isEmpty(dto.getQuantity()),"NPE위험요소체크");
 		order.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity())));
 		orderRepository.save(order);
 	}
