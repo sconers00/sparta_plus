@@ -41,10 +41,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role userRole;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     public User(CreateUserRequestDto requestDto, String password) {
         this.email = requestDto.getEmail();
         this.name = requestDto.getName();
