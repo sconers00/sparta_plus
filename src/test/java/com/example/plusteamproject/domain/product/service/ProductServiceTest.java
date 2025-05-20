@@ -4,7 +4,7 @@ import com.example.plusteamproject.common.Status;
 import com.example.plusteamproject.domain.product.dto.ProductResponseDto;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.entity.ProductCategory;
-import com.example.plusteamproject.domain.product.repository.ProductRepositoryImpl;
+import com.example.plusteamproject.domain.product.repository.ProductRepository;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import com.example.plusteamproject.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 
@@ -25,7 +26,7 @@ import static org.mockito.BDDMockito.given;
 class ProductServiceTest {
 
     @Mock
-    private ProductRepositoryImpl productRepositoryImpl;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -41,16 +42,34 @@ class ProductServiceTest {
 
     @Test
     void 제품_상세조회성공() {
-        given(productRepositoryImpl.getTodoByIdWithUser(1L)).willReturn(Optional.of(product));
+        given(productRepository.getProductByIdWithUser(1L)).willReturn(Optional.of(product));
 
         ProductResponseDto result = productService.getProduct(1L);
 
         assertThat(result).isNotNull();
-        assertThat(result).isEqualTo(product);
+        assertThat(result.getId()).isEqualTo(product.getId());
+        assertThat(result.getUserId()).isEqualTo(product.getUser().getId());
+        assertThat(result.getProductCategory()).isEqualTo(product.getCategory());
+        assertThat(result.getName()).isEqualTo(product.getName());
+        assertThat(result.getContent()).isEqualTo(product.getContent());
+        assertThat(result.getPrice()).isEqualTo(product.getPrice());
+        assertThat(result.getQuantity()).isEqualTo(product.getQuantity());
+    }
+
+    @Test
+    void 제품_상세조회실패() {
+        given(productRepository.getProductByIdWithUser(1L)).willReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.getProduct(1L);
+        });
+
+        assertThat(exception.getMessage()).isEqualTo("재품이 존재하지 않습니다");
     }
 
     @Test
     void findCursorProductBySizeAndCategory() {
+
     }
 
     @Test

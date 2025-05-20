@@ -23,13 +23,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Product> getTodoByIdWithUser(Long id) {
+    public Optional<Product> getProductByIdWithUser(Long id) {
         QProduct product = QProduct.product;
 
         return Optional.ofNullable(jpaQueryFactory
-                .selectFrom(product)
-                .where(product.id.eq(id))
-                .fetchOne()
+            .selectFrom(product)
+            .where(product.id.eq(id))
+            .fetchOne()
         );
     }
 
@@ -39,18 +39,18 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         QProduct product = QProduct.product;
 
         List<ProductListResponseDto> content = jpaQueryFactory
-                .select(Projections.constructor(ProductListResponseDto.class, product.name, product.price))
-                .from(product)
-                .where(product.category.eq(category))
-                .orderBy(product.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+            .select(Projections.constructor(ProductListResponseDto.class, product.name, product.price))
+            .from(product)
+            .where(product.category.eq(category))
+            .orderBy(product.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
         JPAQuery<Long> totalCountQuery = jpaQueryFactory
-                .select(product.count())
-                .from(product)
-                .where(product.category.eq(category));
+            .select(product.count())
+            .from(product)
+            .where(product.category.eq(category));
 
         return PageableExecutionUtils.getPage(content, pageable, () -> totalCountQuery.fetch().size());
     }

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ProductRepositoryCustom {
 
-    Optional<Product> getTodoByIdWithUser(Long id);
+    Optional<Product> getProductByIdWithUser(Long id);
 
     Slice<ProductListResponseDto> findCursorProductBySizeAndCategory(ProductCategory category, Long lastId, Pageable pageable);
 

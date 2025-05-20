@@ -33,8 +33,8 @@ public class ProductService {
 
     public ProductResponseDto getProduct(Long productId) {
 
-        Product findProduct = productRepository.getTodoByIdWithUser(productId)
-                .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
+        Product findProduct = productRepository.getProductByIdWithUser(productId)
+            .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
 
         return new ProductResponseDto(findProduct);
     }
@@ -50,8 +50,8 @@ public class ProductService {
 
     public ProductResponseDto updateProduct(CustomUserDetail userDetail, Long productId, ProductUpdateRequestDto dto) {
 
-        Product findProduct = productRepository.getTodoByIdWithUser(productId)
-                .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
+        Product findProduct = productRepository.getProductByIdWithUser(productId)
+            .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
 
         if (userDetail.getUser().getId().equals(findProduct.getUser().getId())) {
             findProduct.update(dto);
@@ -65,8 +65,8 @@ public class ProductService {
 
     public void deleteProduct(CustomUserDetail userDetail, Long productId) {
 
-        Product findProduct = productRepository.getTodoByIdWithUser(productId)
-                .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
+        Product findProduct = productRepository.getProductByIdWithUser(productId)
+            .orElseThrow(() -> new RuntimeException("재품이 존재하지 않습니다"));
 
         if (!(userDetail.getUser().getId().equals(findProduct.getUser().getId()))) {
             throw new RuntimeException("해당 제품의 생성자만 삭제 가능합니다");
