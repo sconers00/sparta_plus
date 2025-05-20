@@ -43,13 +43,13 @@ public class OrderController {
 			.body(new ApiResponse<>("주문이 완료되었습니다.", orderResponseDto));
 	}
 
-	@GetMapping//전체조회 추가
+	@GetMapping//사용자의 모든 주문 조회 추가
 	public ResponseEntity<List<OrderResponseDto>> findByUserId(@AuthenticationPrincipal CustomUserDetail userDetail){
 		List<OrderResponseDto> dto = orderService.findByUserId(userDetail);
 		return new ResponseEntity<>(dto,HttpStatus.OK);
 	}
 
-	@GetMapping("/{order_id}")//단일조회 추가
+	@GetMapping("/{order_id}")//사용자의 단일 주문 조회 추가
 	public ResponseEntity<OrderResponseDto> findById(@PathVariable Long order_id,@AuthenticationPrincipal CustomUserDetail userDetail){
 		OrderResponseDto dto = orderService.findById(order_id,userDetail);
 		return new ResponseEntity<>(dto,HttpStatus.OK);
