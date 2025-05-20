@@ -1,0 +1,73 @@
+### 환경 변수
+@host = http://localhost
+@port = 8080
+@baseUrl = {{host}}:{{port}}
+
+### 리뷰 생성
+POST {{baseUrl}}/orders/1/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "content": "리뷰 내용",
+  "score": 3
+}
+
+### 리뷰 생성: 내용 X
+POST {{baseUrl}}/orders/1/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "score": 3
+}
+
+### 리뷰 생성: 점수 범위 밖(에러)
+POST {{baseUrl}}/orders/1/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "score": 6
+}
+
+### 리뷰 조회
+GET {{baseUrl}}/products/1/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 리뷰 수정
+PATCH {{baseUrl}}/reviews/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "content": "리뷰 수정",
+  "score": 5
+}
+
+### 리뷰 수정: 내용 X
+PATCH {{baseUrl}}/reviews/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "score": 5
+}
+
+### 리뷰 삭제
+DELETE {{baseUrl}}/reviews/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password": "qwer1234"
+}
+### 리뷰 삭제: 비밀번호 일치X(오류)
+DELETE {{baseUrl}}/reviews/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password": "qwer12345"
+}

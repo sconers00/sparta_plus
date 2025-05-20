@@ -1,0 +1,75 @@
+### 환경 변수
+@host = http://localhost
+@port = 8080
+@baseUrl = {{host}}:{{port}}
+
+### 회원가입
+POST {{baseUrl}}/users/signup
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "name": "이름",
+  "nickname": "닉네임",
+  "password": "qwer1234",
+  "phone": "01012345678",
+  "userRole": "ADMIN"
+}
+
+### 회원가입2
+POST {{baseUrl}}/users/signup
+Content-Type: application/json
+
+{
+  "email": "test2@test.com",
+  "name": "이름2",
+  "nickname": "닉네임2",
+  "password": "qwer1234",
+  "phone": "01023452345",
+  "userRole": "USER"
+}
+
+### 로그인1
+POST {{baseUrl}}/users/signin
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "qwer1234"
+}
+
+> {%
+    client.global.set("token", response.body.data);
+%}
+
+### 로그인2
+POST {{baseUrl}}/users/signin
+Content-Type: application/json
+
+{
+  "email": "test2@test.com",
+  "password": "qwer1234"
+}
+
+> {%
+    client.global.set("token", response.body.data);
+%}
+
+### 사용자 조회
+GET /users
+Authorization: Bearer {token}
+
+### 사용자 정보 수정
+PATCH /users
+Authorization: Bearer {token}
+
+{
+    "name":"newname",
+    "nickname":"newnick",
+    "password":"password1234",
+    "phone":"01098765432"
+}
+
+### 사용자 삭제
+DELETE /users
+Authorization: Bearer {token}

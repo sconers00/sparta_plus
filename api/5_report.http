@@ -1,0 +1,27 @@
+### 환경 변수
+@host = http://localhost
+@port = 8080
+@baseUrl = {{host}}:{{port}}
+
+### 신고 등록
+POST {{baseUrl}}/products/1/reports
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "content": "test",
+  "reportType": "FRAUD"
+}
+
+### 판매자 신고 이력 조회
+GET {{baseUrl}}/users/1/reports
+Authorization: Bearer {{token}}
+
+
+### 제품 신고 이력 조회
+GET {{baseUrl}}/products/1/reports
+Authorization: Bearer {{token}}
+
+### 신고 삭제
+DELETE {{baseUrl}}/reports/1
+Authorization: Bearer {{token}}
