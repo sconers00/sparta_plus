@@ -36,11 +36,11 @@ public class Report extends BaseEntity {
 	private ReportType reportType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(referencedColumnName = "user_id", name = "reportId")
+	@JoinColumn(name = "reporter_Id", nullable = false)
 	private User reporter;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(referencedColumnName = "product_id", name = "productId")
+	@JoinColumn(name = "product_Id", nullable = false)
 	private Product product;
 
 	public Report(String content, ReportType reportType, User reporter, Product product) {
