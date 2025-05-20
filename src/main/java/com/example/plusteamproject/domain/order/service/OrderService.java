@@ -45,7 +45,7 @@ public class OrderService {
 
 	public List<OrderResponseDto> findByUserId(CustomUserDetail userDetail) {//사용자의 모든 주문 조회(로그인정보기반)
 		User user = userDetail.getUser();
-		List<Order> orderList= orderRepository.findByUserId(user.getId());
+		List<Order> orderList= orderRepository.findByUserId_Id(user.getId());
 		return orderList.stream().map(OrderResponseDto::toDto).collect(Collectors.toList());
 	}
 
