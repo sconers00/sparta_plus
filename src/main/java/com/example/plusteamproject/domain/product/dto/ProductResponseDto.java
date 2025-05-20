@@ -18,18 +18,9 @@ public class ProductResponseDto {
     private final BigDecimal price;
     private final Long quantity;
 
-    public ProductResponseDto(Long id,Long userId,ProductCategory productCategory, String name, String content, BigDecimal price, Long quantity) {
-        this.id = id;
-        this.userId =userId;
-        this.productCategory = productCategory;
-        this.name = name;
-        this.content = content;
-        this.price = price;
-        this.quantity = quantity;
-    }
     public ProductResponseDto(Product product) {
         this.id = product.getId();
-        this.userId =product.getUser().getId();
+        this.userId = product.getUser().getId();
         this.productCategory = product.getCategory();
         this.name = product.getName();
         this.content = product.getContent();

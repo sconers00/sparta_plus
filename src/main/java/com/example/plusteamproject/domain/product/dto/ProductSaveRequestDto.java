@@ -22,7 +22,7 @@ public class ProductSaveRequestDto {
     private BigDecimal price;
 
     @NotBlank(message = "수량을 입력해주세요.")
-    @Size(min = 1,message = "수량을 1개이상으로 입력해주세요.")
+    @Size(min = 1, message = "수량을 1개이상으로 입력해주세요.")
     private Long quantity;
 
 }
