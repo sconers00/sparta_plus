@@ -24,20 +24,17 @@ public class Review extends BaseEntity {
 
     private Long userId;
 
-    // TODO: Order 추가 시 설정
-    // @OneToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "order_id")
-    // private Order order;
-    private Long orderId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     private Long productId;
 
-    // TODO: 추후 변경
-    public Review(String content, int score, Long userId, Long orderId, Long productId) {
+    public Review(String content, int score, Long userId, Order order, Long productId) {
         this.content = content;
         this.score = score;
         this.userId = userId;
-        this.orderId = orderId;
+        this.order = order;
         this.productId = productId;
     }
 

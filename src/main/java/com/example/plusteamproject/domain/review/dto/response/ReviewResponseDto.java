@@ -1,5 +1,6 @@
 package com.example.plusteamproject.domain.review.dto.response;
 
+import com.example.plusteamproject.domain.order.entity.Order;
 import com.example.plusteamproject.domain.review.entity.Review;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ public class ReviewResponseDto {
         this.id = review.getId();
         this.userId = review.getUserId();
         this.productId = review.getProductId();
-        this.orderId = review.getOrderId();
+        Order order = review.getOrder();
+        this.orderId = order.getOrderId();
         this.content = review.getContent();
         this.score = review.getScore();
     }

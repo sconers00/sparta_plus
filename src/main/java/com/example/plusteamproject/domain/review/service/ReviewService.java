@@ -1,5 +1,8 @@
 package com.example.plusteamproject.domain.review.service;
 
+import com.example.plusteamproject.domain.order.entity.Order;
+import com.example.plusteamproject.domain.order.entity.OrderStatus;
+import com.example.plusteamproject.domain.order.repository.OrderRepository;
 import com.example.plusteamproject.domain.review.dto.request.DeleteReviewRequestDto;
 import com.example.plusteamproject.domain.review.dto.request.ReviewRequestDto;
 import com.example.plusteamproject.domain.review.dto.response.ReviewListResponseDto;
@@ -26,23 +29,24 @@ public class ReviewService {
 
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ReviewResponseDto saveReview(CustomUserDetail userDetail, Long tempOrderId, ReviewRequestDto dto) {
+    public ReviewResponseDto saveReview(CustomUserDetail userDetail, Long orderId, ReviewRequestDto dto) {
 
         User user = userDetail.getUser();
 
-        // TODO: 주문 NOT FOUND 예외처리
+        Order order = getOrderByOrderId(orderId);
 
-        // TODO: 본인의 주문인지 확인
+        validMyOrder(order.getUserId().getId(), user.getId());
 
-        // TODO: 배송완료?
-
-        // TODO: 배송 후 7일 이후 리뷰 작성 불가
+        if (order.getOrderStatus().equals(OrderStatus.ARRIVED)) {
+            throw new RuntimeException("배송이 완료되지 않아 현재 리뷰 작성이 불가능 합니다.");
+        }
 
         Long tempProductId = 1L;
 
-        Review review = new Review(dto.getContent(), dto.getScore(), user.getId(), tempOrderId, tempProductId);
+        Review review = new Review(dto.getContent(), dto.getScore(), user.getId(), order, tempProductId);
 
         Review saved = reviewRepository.save(review);
 
@@ -75,9 +79,8 @@ public class ReviewService {
         // 해당 리뷰가 없으면 예외처리
         Review review = getReviewByReviewId(reviewId);
 
-        // TODO: 본인의 리뷰인지 확인
-
-        // TODO: 배송 후 7일 이후 리뷰 수정 불가
+        // 본인의 리뷰인지 확인
+        validMyReview(reviewId, user.getId());
 
         review.updateReview(dto.getContent(), dto.getScore());
 
@@ -91,7 +94,8 @@ public class ReviewService {
         // 해당 리뷰가 없으면 예외처리
         Review review = getReviewByReviewId(reviewId);
 
-        // TODO: 본인의 리뷰인지 확인
+        // 본인의 리뷰인지 확인
+        validMyReview(reviewId, user.getId());
 
         validMatchingPassword(dto.getPassword(), user.getPassword());
 
@@ -116,5 +120,21 @@ public class ReviewService {
 
     public Review getReviewByReviewId(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("해당 리뷰가 존재하지 않습니다."));
+    }
+
+    public Order getOrderByOrderId(Long orderId) {
+        return orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("해당 주문이 존재하지 않습니다."));
+    }
+
+    public void validMyOrder(Long orderId, Long userId) {
+        if (!orderId.equals(userId)) {
+            throw new RuntimeException("해당 주문이 본인의 주문이 아닙니다.");
+        }
+    }
+
+    public void validMyReview(Long reviewId, Long userId) {
+        if (!reviewId.equals(userId)) {
+            throw new RuntimeException("본인이 작성한 리뷰가 아닙니다.");
+        }
     }
 }
