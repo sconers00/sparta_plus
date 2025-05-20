@@ -5,6 +5,7 @@ import com.example.plusteamproject.common.Status;
 import com.example.plusteamproject.domain.product.dto.ProductUpdateRequestDto;
 import com.example.plusteamproject.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor //테스트용
 @Table(name = "products")
 public class Product extends BaseEntity {
 
@@ -42,9 +44,6 @@ public class Product extends BaseEntity {
 
     @Column(columnDefinition = "TINYINT(1)")
     private boolean isDeleted = Status.EXIST.isValue();
-
-//    @OneToMany(mappedBy = "product")
-//    private List<Report> reports = new ArrayList<>();
 
     private Product(ProductCategory category, String name, String content, BigDecimal price, Long quantity, User user) {
         this.category = category;
