@@ -73,10 +73,10 @@ public class ReportService {
 
 		Report report = reportRepository.findByIdOrElseThrow(id);
 
-		User tokenByUser = userDetail.getUser();
-		User idByUser = report.getReporter();
+		String userNameByToken = userDetail.getUsername();
+		String userNameByReportId = report.getReporter().getName();
 
-		if(!tokenByUser.equals(idByUser)) {
+		if(!userNameByToken.equals(userNameByReportId)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.");
 		}
 
