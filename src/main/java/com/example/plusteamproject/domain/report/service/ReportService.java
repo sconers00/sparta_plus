@@ -32,7 +32,7 @@ public class ReportService {
 
 
 	Product product = productRepository.findById(productId).orElseThrow(
-		() -> new RuntimeException("해당 제품이 존재하지 않습니다."));
+		() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 제품이 존재하지 않습니다."));
 
 	Long userId = userDetail.getUser().getId();
 
