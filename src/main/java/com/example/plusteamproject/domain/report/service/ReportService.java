@@ -32,7 +32,7 @@ public class ReportService {
 
 
 	Product product = productRepository.findById(productId).orElseThrow(
-		() -> new RuntimeException("해당 제품이 존재하지 않습니다."));
+		() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 제품이 존재하지 않습니다."));
 
 	Long userId = userDetail.getUser().getId();
 
@@ -40,12 +40,6 @@ public class ReportService {
 	if (exists) {
 		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자님께서는 이미 해당 제품에 대해 신고하셨습니다.");
 	}
-
-	/* 제품 신고 자격 검증 로직 ( 고려사항 )
-	if (!userDetail.getUser().equals(product.getUser())) {
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자님께서는 해당 제품을 구매하신 이력이 없습니다.");
-	}
-	 */
 
 	Report report = new Report(requestDto.getContent(), requestDto.getReportType(), userDetail.getUser(), product);
 	reportRepository.save(report);
@@ -76,9 +70,10 @@ public class ReportService {
 	// 신고 삭제(철회)
 	@Transactional
 	public void deleteReport(Long id, CustomUserDetail userDetail) {
-		User tokenByUser = userDetail.getUser();
 
 		Report report = reportRepository.findByIdOrElseThrow(id);
+
+		User tokenByUser = userDetail.getUser();
 		User idByUser = report.getReporter();
 
 		if(!tokenByUser.equals(idByUser)) {
