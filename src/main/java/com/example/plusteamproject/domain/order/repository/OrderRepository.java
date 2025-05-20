@@ -11,6 +11,6 @@ import com.example.plusteamproject.domain.order.entity.Order;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long>{
-	@Query("select o from Order o where o.userId=:id")
+	@Query("select o from Order o left join fetch o.userId u where o.userId=:id")
 	List<Order>findByUserId(@Param("id") Long id);
 }
