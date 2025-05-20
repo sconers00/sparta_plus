@@ -21,5 +21,5 @@ public interface ReportRepository extends JpaRepository <Report, Long> {
 	@EntityGraph(attributePaths = {"reporter", "product"})
 	List<Report> findByProduct_Id(Long productId);
 
-	boolean existsByUser_IdAndProduct_Id(Long userId, Long productId);
+	boolean existsByReporter_IdAndProduct_Id(Long userId, Long productId);
 }
