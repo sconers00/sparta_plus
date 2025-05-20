@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "report")
+@Table(name = "reports")
 @NoArgsConstructor
 public class Report extends BaseEntity {
 
@@ -28,11 +28,11 @@ public class Report extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
+	@Column(nullable = false)
 	private String content;
 
 	@Enumerated(EnumType.STRING)
-	@Column
+	@Column(nullable = false)
 	private ReportType reportType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
