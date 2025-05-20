@@ -1,6 +1,7 @@
 package com.example.plusteamproject.domain.user.entity;
 
 import com.example.plusteamproject.common.BaseEntity;
+import com.example.plusteamproject.common.Status;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,6 +42,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role userRole;
 
+    @Column(columnDefinition = "TINYINT(1)")
+    private boolean isDeleted = Status.EXIST.isValue();
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -56,6 +60,10 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateDeleteStatus(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }
