@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,10 +18,18 @@ public class Search {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "products")
-    private List<Product> products;
+    @Column(nullable = false)
+    private String keyword;
 
     @Column(nullable = false)
     private Long count = 0L;
+
+    public Search(String keyword) {
+        this.keyword = keyword;
+        increaseCount();
+    }
+
+    public void increaseCount() {
+        count++;
+    }
 }
