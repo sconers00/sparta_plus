@@ -1,9 +1,9 @@
-package com.example.plusteamproject.domain.search.controller;
+package com.example.plusteamproject.domain.searchV1.controller;
 
 import com.example.plusteamproject.common.ApiResponse;
 import com.example.plusteamproject.domain.product.dto.ProductResponseDto;
-import com.example.plusteamproject.domain.search.dto.PopularSearchResponseDto;
-import com.example.plusteamproject.domain.search.service.SearchService;
+import com.example.plusteamproject.domain.searchV1.dto.PopularSearchResponseDto;
+import com.example.plusteamproject.domain.searchV1.service.SearchServiceV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("products/search")
+@RequestMapping("/v1/products/search")
 @RequiredArgsConstructor
-public class SearchController {
+public class SearchControllerV1 {
 
-    private final SearchService searchService;
+    private final SearchServiceV1 searchService;
 
     /**
      * 검색어를 통한 상품 조회
@@ -41,7 +41,7 @@ public class SearchController {
      * 인기 검색어 조회
      * @return 1위부터 10위까지의 인기검색어 조회
      */
-    @GetMapping("/popular/v1")
+    @GetMapping("/popular")
     public ResponseEntity<ApiResponse<List<PopularSearchResponseDto>>> findByPopulation() {
 
         List<PopularSearchResponseDto> top10 = searchService.findByPopulation();
