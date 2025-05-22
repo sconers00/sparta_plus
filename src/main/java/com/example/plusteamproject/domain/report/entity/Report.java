@@ -1,5 +1,7 @@
 package com.example.plusteamproject.domain.report.entity;
 
+import java.time.LocalDateTime;
+
 import com.example.plusteamproject.common.BaseEntity;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.user.entity.User;
@@ -49,4 +51,10 @@ public class Report extends BaseEntity {
 		this.reporter = reporter;
 		this.product = product;
 	}
+
+	public void setCreatedAtManually(LocalDateTime createdAt) {
+		this.setCreatedAt(createdAt);
+	}
 }
+
+// 해당 단어에 인덱스를 설정하고 그거를 검색하면
