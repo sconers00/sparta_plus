@@ -22,7 +22,6 @@ public class SearchV2 {
 
     public SearchV2(String keyword) {
         this.keyword = keyword;
-        increaseCount();
     }
 
     public void increaseCount() {
