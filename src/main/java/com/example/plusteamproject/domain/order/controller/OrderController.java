@@ -22,6 +22,7 @@ import com.example.plusteamproject.domain.order.dto.OrderResponseDto;
 import com.example.plusteamproject.domain.order.dto.OrderStatusDto;
 import com.example.plusteamproject.domain.order.entity.OrderStatus;
 import com.example.plusteamproject.domain.order.service.NamedLockOrder;
+import com.example.plusteamproject.domain.order.service.OrderFacade;
 import com.example.plusteamproject.domain.order.service.OrderService;
 import com.example.plusteamproject.security.CustomUserDetail;
 
@@ -37,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderController {
 	private final OrderService orderService;
 	private final NamedLockOrder namedLockOrder;
+	private final OrderFacade orderFacade;
 	@PostMapping
 	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		OrderResponseDto orderResponseDto = orderService.saveOrder(dto, userDetail);
@@ -45,8 +47,15 @@ public class OrderController {
 			.body(new ApiResponse<>("주문이 완료되었습니다.", orderResponseDto));
 	}
 	@PostMapping("/v2")
-	public ResponseEntity<ApiResponse> createOrderV2(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+	public ResponseEntity<ApiResponse<Void>> createOrderV2(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		namedLockOrder.getOrderLock(dto, userDetail);
+		return ResponseEntity
+			.status(HttpStatus.CREATED)
+			.body(new ApiResponse<>("주문이 완료되었습니다."));
+	}
+	@PostMapping("/v3")
+	public ResponseEntity<ApiResponse<Void>> createOrderV3(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+		orderFacade.createOrderRedis(dto, userDetail);
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 			.body(new ApiResponse<>("주문이 완료되었습니다."));
@@ -75,6 +84,13 @@ public class OrderController {
 	@PatchMapping("/v2/{order_id}")
 	public ResponseEntity<ApiResponse<Void>> updateOrderV2(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		namedLockOrder.getOrderLocks(order_id, dto,userDetail);
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.body(new ApiResponse<>("주문이 수정되었습니다."));
+	}
+	@PatchMapping("/v3/{order_id}")
+	public ResponseEntity<ApiResponse<Void>> updateOrderV3(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+		orderFacade.updateOrderRedis(order_id, dto,userDetail);
 		return ResponseEntity
 			.status(HttpStatus.OK)
 			.body(new ApiResponse<>("주문이 수정되었습니다."));

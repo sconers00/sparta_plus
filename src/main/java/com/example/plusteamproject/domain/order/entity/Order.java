@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.example.plusteamproject.common.BaseEntity;
 import com.example.plusteamproject.domain.order.dto.OrderRequestDto;
+import com.example.plusteamproject.domain.order.dto.OrderStatusDto;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.user.entity.User;
 
@@ -21,7 +22,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @Getter
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
@@ -31,22 +32,16 @@ public class Order extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long orderId;
-	@Setter
 	private String paymentMethod;
-	@Setter
 	private Long quantity;
-	@Setter
 	private BigDecimal totalPrice;
-	@Setter
 	private String address;
-	@Setter
 	@Column(name="status", nullable=false, columnDefinition = "varchar(30) DEFAULT 'PENDING'")
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="users_id")
 	private User userId;
-	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="product_id")
 	private Product productId;
@@ -71,5 +66,9 @@ public class Order extends BaseEntity {
 			this.productId = dto.getProductId();
 		totalPrice=price.multiply(
 			BigDecimal.valueOf(quantity));
+	}
+	public void updateStatus(OrderStatusDto dto){
+		if(dto.getOrderStatus()!=null)
+			orderStatus= OrderStatus.valueOf(dto.getOrderStatus());
 	}
 }
