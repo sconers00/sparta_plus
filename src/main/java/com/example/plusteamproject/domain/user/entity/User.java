@@ -1,11 +1,13 @@
 package com.example.plusteamproject.domain.user.entity;
 
 import com.example.plusteamproject.common.BaseEntity;
+import com.example.plusteamproject.common.Status;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor
+@Where(clause = "is_deleted = false")
 public class User extends BaseEntity {
 
     @Id
@@ -41,6 +44,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role userRole;
 
+    @Column(columnDefinition = "TINYINT(1)")
+    private boolean isDeleted = Status.EXIST.isValue();
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
     public User(CreateUserRequestDto requestDto, String password) {
         this.email = requestDto.getEmail();
         this.name = requestDto.getName();
@@ -52,6 +62,10 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateDeleteStatus(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

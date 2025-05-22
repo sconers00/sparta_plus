@@ -1,5 +1,6 @@
 package com.example.plusteamproject.domain.user.service;
 
+import com.example.plusteamproject.common.Status;
 import com.example.plusteamproject.domain.user.dto.request.CreateUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.LoginUserRequestDto;
 import com.example.plusteamproject.domain.user.dto.request.UpdateUserRequestDto;
@@ -80,7 +81,8 @@ public class UserService {
     public void deleteUser(CustomUserDetail userDetail) {
 
         User user = userDetail.getUser();
-        userRepository.delete(user);
+        user.updateDeleteStatus(Status.NON_EXIST.isValue());
+        userRepository.save(user);
 
     }
 }
