@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product,Long>,ProductRepositoryCustom {
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
     @Query("SELECT p FROM Product p WHERE p.name LIKE %:keyword%")
     Slice<Product> findByProductNameContaining(@Param("keyword") String keyword, Pageable pageable);

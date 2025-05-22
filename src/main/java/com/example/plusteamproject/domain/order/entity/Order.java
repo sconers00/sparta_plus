@@ -3,6 +3,7 @@ package com.example.plusteamproject.domain.order.entity;
 import java.math.BigDecimal;
 
 import com.example.plusteamproject.common.BaseEntity;
+import com.example.plusteamproject.domain.order.dto.OrderRequestDto;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.user.entity.User;
 
@@ -58,5 +59,17 @@ public class Order extends BaseEntity {
 		this.orderStatus=orderStatus;
 		this.userId=userId;
 		this.productId=productId;
+	}
+	public void update(OrderRequestDto dto,BigDecimal price) {
+		if (dto.getPaymentMethod() != null)
+			this.paymentMethod = dto.getPaymentMethod();
+		if (dto.getQuantity() != null)
+			this.quantity = dto.getQuantity();
+		if (dto.getAddress() != null)
+			this.address = dto.getAddress();
+		if (dto.getProductId() != null)
+			this.productId = dto.getProductId();
+		totalPrice=price.multiply(
+			BigDecimal.valueOf(quantity));
 	}
 }
