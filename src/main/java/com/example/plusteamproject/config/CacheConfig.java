@@ -16,7 +16,6 @@ public class CacheConfig {
     public CaffeineCacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("searchCache");
         cacheManager.setCaffeine(caffeineCacheBuilder());
-        cacheManager.setAsyncCacheMode(true);
         return cacheManager;
     }
 
