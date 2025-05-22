@@ -37,7 +37,7 @@ class ProductServiceTest {
     void setUp() {
         CreateUserRequestDto dto = new CreateUserRequestDto("test@example.com", "Test User", "testnick", "test123123", "010-1234-5678", "ADMIN");
         User user = new User(dto, "test123123");
-        product = new Product(1L, ProductCategory.BOOKS, "도라에몽", "내용", new BigDecimal(7000), (long) 1000, user, Status.EXIST.isValue());
+        product = new Product(1L, ProductCategory.BOOKS, "도라에몽", "내용", new BigDecimal(7000), (long) 1000, 0L, user, Status.EXIST.isValue());
     }
 
     @Test
