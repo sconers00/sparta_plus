@@ -81,16 +81,7 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
 		Product product = productRepository.findById(dto.getProductId().getId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		if(dto.getPaymentMethod()!=null)
-			order.setPaymentMethod(dto.getPaymentMethod());
-		if(dto.getQuantity()!=null)
-			order.setQuantity(dto.getQuantity());
-		if(dto.getAddress()!=null)
-			order.setAddress(dto.getAddress());
-		if(dto.getProductId()!=null)
-			order.setProductId(dto.getProductId());
-		order.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity())));
-		orderRepository.save(order);
+		order.update(dto, product.getPrice());
 	}
 	@Transactional
 	public void updateOrderV2(Order order, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
@@ -106,15 +97,6 @@ public class OrderService {
 		past.update(cancelDto);
 		Product product = productRepository.findById(dto.getProductId().getId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		if(dto.getPaymentMethod()!=null)
-			order.setPaymentMethod(dto.getPaymentMethod());
-		if(dto.getQuantity()!=null)
-			order.setQuantity(dto.getQuantity());
-		if(dto.getAddress()!=null)
-			order.setAddress(dto.getAddress());
-		if(dto.getProductId()!=null)
-			order.setProductId(dto.getProductId());
-		order.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity())));
 		Long remain = product.getQuantity()-dto.getQuantity();
 		ProductUpdateRequestDto productUpdateRequestDto = new ProductUpdateRequestDto(product.getCategory(),product.getName(),product.getContent(),product.getPrice(),remain);
 		product.update(productUpdateRequestDto);
@@ -150,9 +132,7 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		if((order.getOrderStatus()).equals(OrderStatus.valueOf("ARRIVED")))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-		if(dto.getOrderStatus()!=null)
-			order.setOrderStatus(OrderStatus.valueOf(dto.getOrderStatus()));
-		orderRepository.save(order);
+		order.updateStatus(dto);
 		return orderStatusReturn(order);
 	}
 	public OrderResponseDto orderReturn(Order order){//주문반환기
