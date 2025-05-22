@@ -3,11 +3,13 @@ package com.example.plusteamproject.domain.product.dto;
 import com.example.plusteamproject.domain.product.entity.ProductCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Getter
+@Builder
 public class ProductSaveRequestDto {
 
     @NotBlank
