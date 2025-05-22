@@ -1,0 +1,59 @@
+### 환경 변수
+@host = http://localhost
+@port = 8080
+@baseUrl = {{host}}:{{port}}
+
+### 주문
+POST {{baseUrl}}/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "paymentMethod": "카드",
+  "quantity": 2,
+  "address": "서울특별시 강남구 테헤란로 123",
+  "productId": {
+    "id": 1
+  }
+}
+
+### 주문조회(다)
+GET {{baseUrl}}/orders
+Authorization: Bearer {{token}}
+
+### 주문조회(단)
+GET {{baseUrl}}/orders/1
+Authorization: Bearer {{token}}
+
+### 주문 수정
+PATCH {{baseUrl}}/orders/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "paymentMethod": "REMITTANCE",
+  "quantity": 4,
+  "address": "somewhere",
+  "productId": {
+    "id": 1
+  }
+}
+
+### 주문 취소
+DELETE {{baseUrl}}/orders/1
+Authorization: Bearer {{token}}
+
+###주문 상태 확인
+GET {{baseUrl}}/orders/1/status
+Authorization: Bearer {{token}}
+
+###주문 상태 변경
+PATCH {{baseUrl}}/orders/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "orderId": 1,
+    "productId": 1,
+    "orderStatus":"SHIPPING"
+}

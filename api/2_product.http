@@ -1,0 +1,41 @@
+### 환경 변수
+@host = http://localhost
+@port = 8080
+@baseUrl = {{host}}:{{port}}
+
+###제품 생성
+POST {{baseUrl}}/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+     "productCategory": "ELECTRONICS",
+     "name": "스마트폰",
+     "content": "최신 스마트폰입니다.",
+     "price": 1000,
+     "quantity": 100
+ }
+
+###제품 상세 조회
+GET {{baseUrl}}/products/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###제품 목록 조회(무한스크롤 조회)
+GET {{baseUrl}}/products?category=ELECTRONICS&lastId=0&size=5
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###제품 수정: 모든 필드 선택적
+PATCH {{baseUrl}}/products/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "업데이트된 스마트폰"
+}
+
+###제품 삭제 (관리자 전용)
+DELETE {{baseUrl}}/products/1
+Content-Type: application/json
+Authorization: Bearer {{token}}

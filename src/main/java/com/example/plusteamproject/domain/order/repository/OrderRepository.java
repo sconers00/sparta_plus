@@ -2,6 +2,7 @@ package com.example.plusteamproject.domain.order.repository;
 
 import java.util.List;
 
+import com.example.plusteamproject.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,6 @@ import com.example.plusteamproject.domain.order.entity.Order;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long>{
-	@Query("select o from Order o where o.userId=:id")
-	List<Order>findByUserId(@Param("id") Long id);
+
+	List<Order> findByUserId_Id(Long userIdId);
 }

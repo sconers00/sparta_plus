@@ -18,12 +18,12 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ProductRepositoryImpl implements ProductRepositoryCustom{
+public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
-   private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Product> getTodoByIdWithUser(Long id) {
+    public Optional<Product> getProductByIdWithUser(Long id) {
         QProduct product = QProduct.product;
 
         return Optional.ofNullable(jpaQueryFactory
@@ -36,10 +36,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     @Override
     public Slice<ProductListResponseDto> findCursorProductBySizeAndCategory(ProductCategory category, Long lastId, Pageable pageable) {
 
-        QProduct product =QProduct.product;
+        QProduct product = QProduct.product;
 
         List<ProductListResponseDto> content = jpaQueryFactory
-            .select(Projections.constructor(ProductListResponseDto.class,product.name,product.price))
+            .select(Projections.constructor(ProductListResponseDto.class, product.name, product.price))
             .from(product)
             .where(product.category.eq(category))
             .orderBy(product.createdAt.desc())
@@ -52,6 +52,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
             .from(product)
             .where(product.category.eq(category));
 
-        return PageableExecutionUtils.getPage(content,pageable,()->totalCountQuery.fetch().size());
+        return PageableExecutionUtils.getPage(content, pageable, () -> totalCountQuery.fetch().size());
     }
 }
