@@ -1,11 +1,11 @@
-package com.example.plusteamproject.domain.search.service;
+package com.example.plusteamproject.domain.searchV1.service;
 
 import com.example.plusteamproject.domain.product.dto.ProductResponseDto;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.repository.ProductRepository;
-import com.example.plusteamproject.domain.search.dto.PopularSearchResponseDto;
-import com.example.plusteamproject.domain.search.entity.Search;
-import com.example.plusteamproject.domain.search.repository.SearchRepository;
+import com.example.plusteamproject.domain.searchV1.dto.PopularSearchResponseDto;
+import com.example.plusteamproject.domain.searchV1.entity.SearchV1;
+import com.example.plusteamproject.domain.searchV1.repository.SearchRepositoryV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,15 +18,15 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
-public class SearchService {
+public class SearchServiceV1 {
 
-    private final SearchRepository searchRepository;
+    private final SearchRepositoryV1 searchRepository;
     private final ProductRepository productRepository;
 
     @Transactional
     public Slice<ProductResponseDto> findByProductName(String keyword) {
 
-        Search search = searchRepository.findByKeyword(keyword).orElseGet(() -> searchRepository.save(new Search(keyword)));
+        SearchV1 search = searchRepository.findByKeyword(keyword).orElseGet(() -> searchRepository.save(new SearchV1(keyword)));
         search.increaseCount();
 
         Pageable pageable = PageRequest.of(0,10);
@@ -38,7 +38,7 @@ public class SearchService {
     @Transactional(readOnly = true)
     public List<PopularSearchResponseDto> findByPopulation() {
 
-        List<Search> top10 = searchRepository.findTop10ByOrderByCountDesc();
+        List<SearchV1> top10 = searchRepository.findTop10ByOrderByCountDesc();
 
          return IntStream.range(0, top10.size())
                 .mapToObj(i -> new PopularSearchResponseDto(i + 1, top10.get(i).getKeyword()))

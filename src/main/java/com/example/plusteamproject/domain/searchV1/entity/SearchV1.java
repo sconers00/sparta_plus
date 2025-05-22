@@ -1,18 +1,14 @@
-package com.example.plusteamproject.domain.search.entity;
+package com.example.plusteamproject.domain.searchV1.entity;
 
-import com.example.plusteamproject.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @Entity
-@Table(name = "searchs")
+@Table(name = "searchs1")
 @NoArgsConstructor
-public class Search {
+public class SearchV1 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +20,7 @@ public class Search {
     @Column(nullable = false)
     private Long count = 0L;
 
-    public Search(String keyword) {
+    public SearchV1(String keyword) {
         this.keyword = keyword;
         increaseCount();
     }

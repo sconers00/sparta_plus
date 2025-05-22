@@ -1,4 +1,4 @@
-package com.example.plusteamproject.domain.search.dto;
+package com.example.plusteamproject.domain.searchV1.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

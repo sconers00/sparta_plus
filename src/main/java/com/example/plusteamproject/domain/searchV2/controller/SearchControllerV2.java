@@ -1,9 +1,9 @@
-package com.example.plusteamproject.domain.search.controller;
+package com.example.plusteamproject.domain.searchV2.controller;
 
 import com.example.plusteamproject.common.ApiResponse;
 import com.example.plusteamproject.domain.product.dto.ProductResponseDto;
-import com.example.plusteamproject.domain.search.dto.PopularSearchResponseDto;
-import com.example.plusteamproject.domain.search.service.SearchService;
+import com.example.plusteamproject.domain.searchV1.dto.PopularSearchResponseDto;
+import com.example.plusteamproject.domain.searchV2.service.SearchServiceV2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -16,20 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("products/search")
+@RequestMapping("/v2/products/search")
 @RequiredArgsConstructor
-public class SearchController {
+public class SearchControllerV2 {
 
-    private final SearchService searchService;
+    private final SearchServiceV2 searchService;
 
-    /**
-     * 검색어를 통한 상품 조회
-     * @param keyword 검색 키워드
-     * @return 해당 키워드가 들어간 상품들의 정보
-     */
     @GetMapping
     public ResponseEntity<ApiResponse<Slice<ProductResponseDto>>> findByProductName(@RequestParam String keyword) {
 
+        searchService.increaseSearchCount(keyword);
         Slice<ProductResponseDto> products = searchService.findByProductName(keyword);
 
         return ResponseEntity
@@ -37,11 +33,7 @@ public class SearchController {
                 .body(new ApiResponse<>("해당 상품을 조회합니다.", products));
     }
 
-    /**
-     * 인기 검색어 조회
-     * @return 1위부터 10위까지의 인기검색어 조회
-     */
-    @GetMapping("/popular/v1")
+    @GetMapping("/popular")
     public ResponseEntity<ApiResponse<List<PopularSearchResponseDto>>> findByPopulation() {
 
         List<PopularSearchResponseDto> top10 = searchService.findByPopulation();
@@ -50,4 +42,5 @@ public class SearchController {
                 .status(HttpStatus.OK)
                 .body(new ApiResponse<>("인기 검색어 순위 10위까지 조회합니다.", top10));
     }
+
 }
