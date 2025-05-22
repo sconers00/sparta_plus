@@ -92,6 +92,34 @@ public class OrderService {
 		order.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity())));
 		orderRepository.save(order);
 	}
+	@Transactional
+	public void updateOrderV2(Order order, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
+		User user = userDetail.getUser();
+		if(!Objects.equals(user.getId(),order.getUserId().getId()))
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		if(!order.getOrderStatus().equals(OrderStatus.valueOf("PENDING")))
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
+		Product past = productRepository.findById(dto.getProductId().getId())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		Long quantity = past.getQuantity()+order.getQuantity();
+		ProductUpdateRequestDto cancelDto = new ProductUpdateRequestDto(past.getCategory(), past.getName(), past.getContent(), past.getPrice(),quantity);
+		past.update(cancelDto);
+		Product product = productRepository.findById(dto.getProductId().getId())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if(dto.getPaymentMethod()!=null)
+			order.setPaymentMethod(dto.getPaymentMethod());
+		if(dto.getQuantity()!=null)
+			order.setQuantity(dto.getQuantity());
+		if(dto.getAddress()!=null)
+			order.setAddress(dto.getAddress());
+		if(dto.getProductId()!=null)
+			order.setProductId(dto.getProductId());
+		order.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity())));
+		Long remain = product.getQuantity()-dto.getQuantity();
+		ProductUpdateRequestDto productUpdateRequestDto = new ProductUpdateRequestDto(product.getCategory(),product.getName(),product.getContent(),product.getPrice(),remain);
+		product.update(productUpdateRequestDto);
+		order.update(dto,product.getPrice());
+	}
 
 	@Transactional
 	public void deleteOrder(Long orderId, CustomUserDetail userDetail) {//하드딜리트, 주문자 본인만 주문 취소 가능.

@@ -7,6 +7,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.plusteamproject.common.lock.LockRepository;
 import com.example.plusteamproject.domain.order.dto.OrderRequestDto;
+import com.example.plusteamproject.domain.order.entity.Order;
+import com.example.plusteamproject.domain.order.repository.OrderRepository;
 import com.example.plusteamproject.security.CustomUserDetail;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class NamedLockOrder {
 	private final LockRepository lockRepository;
 	private final OrderService orderService;
+	private final OrderRepository orderRepository;
 
 	@Transactional
 	public void getOrderLock(OrderRequestDto dto, CustomUserDetail userDetail) {
@@ -28,6 +31,26 @@ public class NamedLockOrder {
 		} catch(Exception e){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"오류발생");}
 		finally{lockRepository.releaseLock(name.toString());
+		}
+	}
+	@Transactional
+	public void getOrderLocks(Long id, OrderRequestDto dto, CustomUserDetail userDetail) {
+		StringBuilder name1 = new StringBuilder();
+		StringBuilder name2 = new StringBuilder();
+		name1.append(dto.getProductId().getName());
+		name1.append(dto.getProductId().getId());
+		Order order = orderRepository.findById(id).orElseThrow(
+			()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		name2.append(order.getProductId().getName());
+		name2.append(order.getProductId().getId());
+		try {
+			lockRepository.getLock(name1.toString());
+			lockRepository.getLock(name2.toString());
+			orderService.updateOrderV2(order, dto, userDetail);
+		} catch(Exception e){
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"오류발생");}
+		finally{lockRepository.releaseLock(name1.toString());
+			lockRepository.releaseLock(name2.toString());
 		}
 	}
 }

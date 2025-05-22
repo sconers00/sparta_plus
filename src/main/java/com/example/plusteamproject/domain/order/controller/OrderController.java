@@ -72,6 +72,14 @@ public class OrderController {
 			.body(new ApiResponse<>("주문이 수정되었습니다."));
 	}
 
+	@PatchMapping("/v2/{order_id}")
+	public ResponseEntity<ApiResponse<Void>> updateOrderV2(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+		namedLockOrder.getOrderLocks(order_id, dto,userDetail);
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.body(new ApiResponse<>("주문이 수정되었습니다."));
+	}
+
 	@DeleteMapping("/{order_id}")
 	public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long order_id, @AuthenticationPrincipal CustomUserDetail userDetail){
 		orderService.deleteOrder(order_id, userDetail);
