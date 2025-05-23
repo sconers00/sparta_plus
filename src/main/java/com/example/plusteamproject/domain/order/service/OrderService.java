@@ -124,7 +124,7 @@ public class OrderService {
 	}
 
 	@Transactional
-	public OrderStatusDto updateOrderStatus(OrderStatusDto dto, CustomUserDetail userDetail) {
+	public OrderStatusDto updateOrderStatus(OrderStatusDto dto, CustomUserDetail userDetail) {//주문상태 업데이트
 		User user = userDetail.getUser();
 		Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		if(!Objects.equals(user.getId(),order.getProductId().getUser().getId())
