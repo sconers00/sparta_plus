@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class NamedLockOrder {
+public class NamedLockOrder {//네임드락. redisson을 사용시 주석처리해주세요
 	private final LockRepository lockRepository;
 	private final OrderService orderService;
 	private final OrderRepository orderRepository;

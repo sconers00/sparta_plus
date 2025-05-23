@@ -22,19 +22,26 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
+// @NoArgsConstructor(access= AccessLevel.PROTECTED)
+@NoArgsConstructor
+@Setter
 @Entity
 @Table(name="orders")
 public class Order extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long orderId;
+	@Column(nullable=false)
 	private String paymentMethod;
+	@Column(nullable=false)
 	private Long quantity;
+	@Column(nullable=false)
 	private BigDecimal totalPrice;
+	@Column(nullable=false)
 	private String address;
 	@Column(name="status", nullable=false, columnDefinition = "varchar(30) DEFAULT 'PENDING'")
 	@Enumerated(EnumType.STRING)

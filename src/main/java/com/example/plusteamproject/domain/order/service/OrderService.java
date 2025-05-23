@@ -54,7 +54,7 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		ProductUpdateRequestDto productUpdateRequestDto = new ProductUpdateRequestDto(product.getCategory(),product.getName(),product.getContent(),product.getPrice(),remain);
 		product.update(productUpdateRequestDto);
-		orderRepository.save(order);
+		orderRepository.saveAndFlush(order);
 	}
 
 	public List<OrderResponseDto> findByUserId(CustomUserDetail userDetail) {//사용자의 모든 주문 조회(로그인정보기반)
@@ -90,17 +90,17 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		if(!order.getOrderStatus().equals(OrderStatus.valueOf("PENDING")))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
-		Product past = productRepository.findById(dto.getProductId().getId())
+		Product past = productRepository.findById(order.getProductId().getId())//주문 수정 대상 product
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		Long quantity = past.getQuantity()+order.getQuantity();
 		ProductUpdateRequestDto cancelDto = new ProductUpdateRequestDto(past.getCategory(), past.getName(), past.getContent(), past.getPrice(),quantity);
-		past.update(cancelDto);
-		Product product = productRepository.findById(dto.getProductId().getId())
+		past.update(cancelDto);//주문 수정 대상 product의 quantity를 복구
+		Product product = productRepository.findById(dto.getProductId().getId())//주문 수정으로 주문될 product
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		Long remain = product.getQuantity()-dto.getQuantity();
 		ProductUpdateRequestDto productUpdateRequestDto = new ProductUpdateRequestDto(product.getCategory(),product.getName(),product.getContent(),product.getPrice(),remain);
-		product.update(productUpdateRequestDto);
-		order.update(dto,product.getPrice());
+		product.update(productUpdateRequestDto);//주문수정 결과 주문될 product의 quantity 감소 업데이트
+		order.update(dto,product.getPrice());//주문 업데이트
 	}
 
 	@Transactional
@@ -124,7 +124,7 @@ public class OrderService {
 	}
 
 	@Transactional
-	public OrderStatusDto updateOrderStatus(OrderStatusDto dto, CustomUserDetail userDetail) {
+	public OrderStatusDto updateOrderStatus(OrderStatusDto dto, CustomUserDetail userDetail) {//주문상태 업데이트
 		User user = userDetail.getUser();
 		Order order = orderRepository.findById(dto.getOrderId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		if(!Objects.equals(user.getId(),order.getProductId().getUser().getId())

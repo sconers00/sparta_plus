@@ -14,6 +14,9 @@ import com.example.plusteamproject.domain.user.entity.User;
 import com.example.plusteamproject.domain.user.repository.UserRepository;
 import com.example.plusteamproject.security.CustomUserDetail;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,11 +56,11 @@ public class ReviewService {
         return new ReviewResponseDto(saved);
     }
 
-    public ReviewListResponseDto getReviewsByProductId(Long productId, SortType sortType) {
+    public ReviewListResponseDto getReviewsByProductId(Long productId, SortType sortType, Pageable pageable) {
 
-        List<Review> reviews = reviewRepository.findByProductId(productId);
+        Page<Review> page = reviewRepository.findByProductId(productId, pageable);
 
-        Stream<Review> stream = reviews.stream();
+        Stream<Review> stream = page.getContent().stream();
 
         if (SORT_COMPARATORS.containsKey(sortType)) {
             stream = stream.sorted(SORT_COMPARATORS.get(sortType));
@@ -65,8 +68,57 @@ public class ReviewService {
 
         List<ReviewResponseDto> reviewList = stream.map(this::convertToDto).toList();
 
-        Long count = (long) reviewList.size();
+        Long count = page.getTotalElements();
         double average = reviewList.stream().mapToInt(ReviewResponseDto::getScore).average().orElse(0.0);
+
+        return new ReviewListResponseDto(count, average, reviewList);
+    }
+
+    public ReviewListResponseDto getReviewsByProductIdWithIndex(Long productId, SortType sortType, Pageable pageable) {
+
+        Page<Review> page = switch (sortType) {
+            case SCORE_DESC -> reviewRepository.findByProductIdOrderByScoreDesc(productId, pageable);
+            case SCORE_ASC -> reviewRepository.findByProductIdOrderByScoreAsc(productId, pageable);
+            default -> reviewRepository.findByProductIdOrderByCreatedAtDesc(productId, pageable);
+        };
+
+        List<ReviewResponseDto> reviewList = page.getContent()
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+
+        Long count = page.getTotalElements();
+        double average = reviewList.stream()
+                .mapToInt(ReviewResponseDto::getScore)
+                .average()
+                .orElse(0.0);
+
+        return new ReviewListResponseDto(count, average, reviewList);
+    }
+
+    @Cacheable(
+            value = "productReviewCache",
+            key = "#productId + '_' + #sortType.name() + '_' + #pageable.pageNumber + '_' + #pageable.pageSize",
+            condition = "#pageable.pageNumber == 0 && #pageable.pageSize == 500"
+    )
+    public ReviewListResponseDto getReviewsByProductIdWithIndexAndCash(Long productId, SortType sortType, Pageable pageable) {
+        System.out.println("캐시 미스 - DB에서 조회");
+        Page<Review> page = switch (sortType) {
+            case SCORE_DESC -> reviewRepository.findByProductIdOrderByScoreDesc(productId, pageable);
+            case SCORE_ASC -> reviewRepository.findByProductIdOrderByScoreAsc(productId, pageable);
+            default -> reviewRepository.findByProductIdOrderByCreatedAtDesc(productId, pageable);
+        };
+
+        List<ReviewResponseDto> reviewList = page.getContent()
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+
+        Long count = page.getTotalElements();
+        double average = reviewList.stream()
+                .mapToInt(ReviewResponseDto::getScore)
+                .average()
+                .orElse(0.0);
 
         return new ReviewListResponseDto(count, average, reviewList);
     }
