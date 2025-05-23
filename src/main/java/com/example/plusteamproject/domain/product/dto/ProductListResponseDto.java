@@ -13,4 +13,5 @@ public class ProductListResponseDto {
 
     private final BigDecimal price;
 
+    
 }

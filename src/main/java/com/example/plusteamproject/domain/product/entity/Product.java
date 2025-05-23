@@ -38,6 +38,9 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
+    @Column
+    private Long totalView;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -52,6 +55,7 @@ public class Product extends BaseEntity {
         this.price = price;
         this.quantity = quantity;
         this.user = user;
+        this.totalView = 0L;
     }
 
     public static Product of(ProductCategory category, String name, String content, BigDecimal price, Long quantity, User user) {
@@ -73,6 +77,10 @@ public class Product extends BaseEntity {
 
     public void updateDeleteStatus(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public void incrementTotalView() {
+        totalView++;
     }
 
 }
