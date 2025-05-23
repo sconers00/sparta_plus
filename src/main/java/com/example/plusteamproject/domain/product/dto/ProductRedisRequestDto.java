@@ -2,7 +2,6 @@ package com.example.plusteamproject.domain.product.dto;
 
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.entity.ProductCategory;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,7 +24,6 @@ public class ProductRedisRequestDto implements Serializable {
     private Long totalView;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    @JsonProperty("deleted")
     private boolean isDeleted;
 
     public ProductRedisRequestDto(Product product) {

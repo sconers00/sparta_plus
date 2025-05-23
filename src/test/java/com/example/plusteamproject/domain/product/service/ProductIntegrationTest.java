@@ -43,7 +43,7 @@ public class ProductIntegrationTest {
 
         // When: getProduct2 호출 (Redis 조회수 증가)
         for (int i = 0; i < iterations; i++) {
-            ProductResponseDto response = productService.getProduct2(7000L);
+            ProductResponseDto response = productService.getProduct2(7000L, null);
         }
 
         // Then: 실행 시간 출력
