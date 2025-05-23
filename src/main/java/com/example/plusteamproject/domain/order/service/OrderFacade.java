@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class OrderFacade {
+public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해주세요
 
 	private final RedissonClient redissonClient;
 	private final OrderService orderService;
