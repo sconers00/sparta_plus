@@ -83,4 +83,8 @@ public class Product extends BaseEntity {
         totalView++;
     }
 
+    public void incrementTotalViewByRedis(Long score) {
+        totalView += score;
+    }
+
 }
