@@ -46,27 +46,24 @@ public class ProductService {
     }
 
 
-    public ProductResponseDto getProduct2(Long productId) {
+    public ProductResponseDto getProduct2(Long productId, CustomUserDetail userDetail) {
         String cacheKey = "product:" + productId;
+
         Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
 
         if (cachedObject != null) {
-            // LinkedHashMap을 ProductRedisRequestDto로 변환
+            // LinkedHashMap -> ProductRedisRequestDto 로 변환
             ProductRedisRequestDto cachedDto = objectMapper.convertValue(cachedObject, ProductRedisRequestDto.class);
-
-            // Redis 캐시에서 가져온 데이터를 ProductResponseDto로 변환
-            increaseViewCount(productId);
+            increaseViewCount(productId, userDetail.getUser().getId());
             return new ProductResponseDto(cachedDto, getViewCount(productId));
         }
 
-        // 캐시에 데이터가 없으면 DB에서 조회
         Product findProduct = productRepository.getProductByIdWithUser(productId)
             .orElseThrow(() -> new RuntimeException("제품이 존재하지 않습니다"));
 
-        // Redis에 저장
         redisTemplate.opsForValue().set(cacheKey, new ProductRedisRequestDto(findProduct), Duration.ofMinutes(10));
+        increaseViewCount(productId, userDetail.getUser().getId());
 
-        increaseViewCount(productId);
         return new ProductResponseDto(findProduct, getViewCount(productId));
     }
 
@@ -86,6 +83,8 @@ public class ProductService {
 
         if (userDetail.getUser().getId().equals(findProduct.getUser().getId())) {
             findProduct.update(dto);
+            String cacheKey = "product:" + productId;
+            redisTemplate.delete(cacheKey);
         } else {
             throw new RuntimeException("해당 제품의 생성자만 수정 가능합니다");
         }
@@ -103,19 +102,31 @@ public class ProductService {
             throw new RuntimeException("해당 제품의 생성자만 삭제 가능합니다");
         }
 
+
         findProduct.updateDeleteStatus(Status.NON_EXIST.isValue());
         productRepository.save(findProduct);
+
+        String cacheKey = "product:" + productId;
+        redisTemplate.delete(cacheKey);
     }
 
 
-    public void increaseViewCount(Long id) {
-        redisTemplate.opsForZSet().incrementScore("viewCount", String.valueOf(id), 1);
+    public void increaseViewCount(Long productId, Long ipAddress) {
+        String key = "viewId:" + productId;
+
+        Boolean hasViewed = redisTemplate.opsForSet().isMember(key, ipAddress);
+        if (Boolean.TRUE.equals(hasViewed)) {
+            return;
+        }
+        redisTemplate.opsForZSet().incrementScore("viewCount", productId.toString(), 1);
+
+        // 조회 기록 추가 및 TTL 설정
+        redisTemplate.opsForSet().add(key, ipAddress);
     }
 
     public Long getViewCount(Long id) {
-        String key = "viewCount";
-        return redisTemplate.opsForZSet().score(key, String.valueOf(id)).longValue();
+        Double score = redisTemplate.opsForZSet().score("viewCount", id.toString());
+        return score != null ? score.longValue() : 0L;
     }
-
 
 }

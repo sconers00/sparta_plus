@@ -39,16 +39,17 @@ public class ProductController {
     ) {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponse<>("제품의 상세정보 입니다.", productService.getProduct(productId)));
+            .body(new ApiResponse<>("제품의 DB를 이용한 상세정보 입니다.", productService.getProduct(productId)));
     }
 
     @GetMapping("/v2/products/{productId}")
     public ResponseEntity<ApiResponse<ProductResponseDto>> getProduct2(
+        @AuthenticationPrincipal CustomUserDetail userDetail,
         @PathVariable(name = "productId") Long productId
     ) {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new ApiResponse<>("제품의 상세정보 입니다.", productService.getProduct2(productId)));
+            .body(new ApiResponse<>("제품의 Redis 를 이용한 상세정보 입니다.", productService.getProduct2(productId, userDetail)));
     }
 
     @GetMapping("/products")

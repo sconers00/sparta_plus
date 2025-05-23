@@ -1,5 +1,6 @@
 package com.example.plusteamproject.domain.product.repository;
 
+import com.example.plusteamproject.common.Status;
 import com.example.plusteamproject.domain.product.dto.ProductListResponseDto;
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.entity.ProductCategory;
@@ -28,7 +29,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         return Optional.ofNullable(jpaQueryFactory
             .selectFrom(product)
-            .where(product.id.eq(id))
+            .where(product.id.eq(id),
+                product.isDeleted.ne(Status.NON_EXIST.isValue()))
             .fetchOne()
         );
     }
@@ -41,7 +43,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         List<ProductListResponseDto> content = jpaQueryFactory
             .select(Projections.constructor(ProductListResponseDto.class, product.name, product.price))
             .from(product)
-            .where(product.category.eq(category))
+            .where(product.category.eq(category),
+                product.isDeleted.ne(Status.NON_EXIST.isValue()))
             .orderBy(product.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
