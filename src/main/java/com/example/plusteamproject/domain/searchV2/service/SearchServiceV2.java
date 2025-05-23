@@ -25,13 +25,6 @@ public class SearchServiceV2 {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ProductRepository productRepository;
 
-    public void increaseSearchCount(String keyword) {
-
-        redisTemplate.opsForZSet().incrementScore("search:ranking", keyword, 1);
-
-        redisTemplate.expire("search:ranking", Duration.ofHours(1));
-    }
-
     @Transactional
     public Slice<ProductResponseDto> findByProductName(String keyword) {
 
@@ -53,6 +46,13 @@ public class SearchServiceV2 {
         return IntStream.range(0, top10List.size())
                 .mapToObj(i -> new PopularSearchResponseDto(i + 1, (String) top10List.get(i).getValue()))
                 .toList();
+    }
+
+    public void increaseSearchCount(String keyword) {
+
+        redisTemplate.opsForZSet().incrementScore("search:ranking", keyword, 1);
+
+        redisTemplate.expire("search:ranking", Duration.ofHours(1));
     }
 
 }
