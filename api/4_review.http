@@ -36,6 +36,21 @@ GET {{baseUrl}}/products/1/reviews
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+### 리뷰 조회: 별점순
+GET {{baseUrl}}/products/1/reviews?sort=score_desc
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 리뷰 조회: 별점순(인덱싱)
+GET {{baseUrl}}/products/1/reviews/indexing?sort=score_desc
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 리뷰 조회: 별점순(캐싱)
+GET {{baseUrl}}/products/1/reviews/indexing-cashing?sort=score_desc
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
 ### 리뷰 수정
 PATCH {{baseUrl}}/reviews/1
 Content-Type: application/json
