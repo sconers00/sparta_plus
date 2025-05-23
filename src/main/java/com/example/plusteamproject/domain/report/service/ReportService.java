@@ -1,9 +1,9 @@
 package com.example.plusteamproject.domain.report.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.repository.ProductRepository;
+import com.example.plusteamproject.domain.report.dto.DailyReportsTypeResponseDto;
 import com.example.plusteamproject.domain.report.dto.ProductReportCountDto;
 import com.example.plusteamproject.domain.report.dto.ReportRequestDto;
 import com.example.plusteamproject.domain.report.dto.ReportResponseDto;
@@ -78,7 +79,7 @@ public class ReportService {
 	}
 
 
-	// 가장 많이 신고받은 제품 TOP 5 조회 <- 실제로 가장 많이 조회될 것 같은 기능이므로 인덱싱 선정!
+	// 가장 많이 신고받은 제품 TOP 5 조회
 	public List<ProductReportCountDto> GetTop5ReportedProducts(int limit) {
 		Pageable pageable = PageRequest.of(0, limit);
 		return reportRepository.findTop5ProductReportCounts(pageable);
@@ -88,6 +89,18 @@ public class ReportService {
 	public List<ReportTypeCountDto> countDailyReports() {
 		LocalDateTime daily = LocalDateTime.now().minusDays(1);
 		return reportRepository.countByReportTypeDaily(daily);
+	}
+
+	// INDEXING 실험- PARAM 입력
+	public List<DailyReportsTypeResponseDto> GetDailyReportsType(LocalDate day, ReportType reportType) {
+		LocalDateTime date = day.atStartOfDay();
+		return reportRepository.getDailyReportsType(date, reportType);
+	}
+	// INDEXING 실험- PARAM 주입
+	public List<DailyReportsTypeResponseDto> GetDailyReportsTypeNoParam() {
+		LocalDateTime daily = LocalDateTime.now().minusDays(1);
+		ReportType reportType = ReportType.FRAUD;
+		return reportRepository.getDailyReportsType(daily, reportType);
 	}
 
 	// 신고 삭제(철회)

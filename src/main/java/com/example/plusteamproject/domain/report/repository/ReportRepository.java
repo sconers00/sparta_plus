@@ -10,9 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.plusteamproject.domain.report.dto.DailyReportsTypeResponseDto;
 import com.example.plusteamproject.domain.report.dto.ProductReportCountDto;
 import com.example.plusteamproject.domain.report.dto.ReportTypeCountDto;
 import com.example.plusteamproject.domain.report.entity.Report;
+import com.example.plusteamproject.domain.report.entity.ReportType;
 
 public interface ReportRepository extends JpaRepository <Report, Long> {
 
@@ -49,4 +51,14 @@ public interface ReportRepository extends JpaRepository <Report, Long> {
 	GROUP BY r.reportType
 	""")
 	List<ReportTypeCountDto> countByReportTypeDaily(LocalDateTime day);
+
+	@Query("""
+	SELECT new com.example.plusteamproject.domain.report.dto.DailyReportsTypeResponseDto(
+		r.id, r.reportType, r.createdAt)
+	FROM Report r
+	WHERE r.createdAt >= :day
+	AND r.reportType = :type
+	""")
+	List<DailyReportsTypeResponseDto> getDailyReportsType(LocalDateTime day, ReportType type);
+
 }
