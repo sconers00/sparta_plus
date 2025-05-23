@@ -26,7 +26,7 @@ public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해�
 	public void createOrderRedis(OrderRequestDto dto, CustomUserDetail userDetail) {
 		RLock lock = redissonClient.getLock(String.format("orderInfo : %s %s", dto.getProductId().getId(),dto.getProductId().getName()));
 		try {
-			if (!lock.tryLock(15, 1, TimeUnit.SECONDS)) {
+			if (!lock.tryLock(20, 1, TimeUnit.SECONDS)) {
 				System.out.println("락 획득 대기 시간이 만료되었습니다.");
 			}
 			orderService.saveOrderV2(dto,userDetail);
@@ -39,7 +39,7 @@ public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해�
 	public void updateOrderRedis(Long id,OrderRequestDto dto, CustomUserDetail userDetail) {
 		RLock lock = redissonClient.getLock(String.format("orderInfo : %s %s", dto.getProductId().getId(),dto.getProductId().getName()));
 		try {
-			if (!lock.tryLock(15, 1, TimeUnit.SECONDS)) {
+			if (!lock.tryLock(20, 1, TimeUnit.SECONDS)) {
 				System.out.println("락 획득 대기 시간이 만료되었습니다.");
 			}
 			Order order = orderRepository.findById(id).orElseThrow(
