@@ -37,11 +37,11 @@ public class ProductIntegrationTest {
             "test@example.com",
             "홍길동",
             "테스트",
-            "password123",
+            "123456789",
             "01012345678",
             "USER"
         );
-        testUser = new User(userRequest, "password");
+        testUser = new User(userRequest, "123456789");
         userRepository.save(testUser);
 
         List<Product> products = new ArrayList<>();
@@ -75,11 +75,11 @@ public class ProductIntegrationTest {
                 "test@example.com",
                 "홍길동" + i,
                 "테스트",
-                "password12" + i,
+                "password123" + i,
                 null,
                 "USER"
             );
-            User user1 = new User(userRequest, "password12" + i);
+            User user1 = new User(userRequest, "password123" + i);
             CustomUserDetail customDetail = new CustomUserDetail(user1);
             productService.getProduct2(7000L, customDetail);
         }
@@ -87,7 +87,7 @@ public class ProductIntegrationTest {
         double durationMsGetProduct2 = (endTimeGetProduct2 - startTimeGetProduct2) / 1_000_000.0;
 
 
-        System.out.println("=== Performance Test Results ===");
+        System.out.println("=== 속도 성능 테스트 ===");
         System.out.printf("DB에 조회수저장 시간: %.2f ms for %d calls%n", durationMsGetProduct, iterations);
         System.out.printf("Redis에 조회수 저장 시간 : %.2f ms for %d calls%n", durationMsGetProduct2, iterations);
     }
