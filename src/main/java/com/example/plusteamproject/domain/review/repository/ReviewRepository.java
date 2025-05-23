@@ -1,10 +1,24 @@
 package com.example.plusteamproject.domain.review.repository;
 
 import com.example.plusteamproject.domain.review.entity.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByProductId(Long productId);
+
+    Page<Review> findByProductId(Long productId, Pageable pageable);
+
+    Page<Review> findByProductIdOrderByScoreDesc(Long productId, Pageable pageable);
+
+    Page<Review> findByProductIdOrderByScoreAsc(Long productId, Pageable pageable);
+
+    Page<Review> findByProductIdOrderByCreatedAtDesc(Long productId, Pageable pageable);
+
+    @Query("SELECT AVG(r.score) FROM Review r WHERE r.productId = :productId")
+    Double findAverageScoreByProductId(@Param("productId") Long productId);
+
+
 }

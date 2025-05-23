@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "review")
+@Table(name = "review", indexes = {@Index(name = "idx_score", columnList = "score")})
 public class Review extends BaseEntity {
 
     @Id
@@ -24,7 +24,8 @@ public class Review extends BaseEntity {
 
     private Long userId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    // @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
