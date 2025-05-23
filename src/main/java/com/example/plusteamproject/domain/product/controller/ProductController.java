@@ -25,56 +25,66 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/products")
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(
-            @AuthenticationPrincipal CustomUserDetail userDetail,
-            @RequestBody ProductSaveRequestDto productSaveRequestDto
+        @AuthenticationPrincipal CustomUserDetail userDetail,
+        @RequestBody ProductSaveRequestDto productSaveRequestDto
     ) {
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApiResponse<>("제품을 생성했습니다.", productService.createProduct(userDetail, productSaveRequestDto)));
+            .status(HttpStatus.CREATED)
+            .body(new ApiResponse<>("제품을 생성했습니다.", productService.createProduct(userDetail, productSaveRequestDto)));
     }
 
-    @GetMapping("/products/{productId}")
+    @GetMapping("/v1/products/{productId}")
     public ResponseEntity<ApiResponse<ProductResponseDto>> getProduct(
-            @PathVariable(name = "productId") Long productId
+        @PathVariable(name = "productId") Long productId
     ) {
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse<>("제품의 상세정보 입니다.", productService.getProduct(productId)));
+            .status(HttpStatus.OK)
+            .body(new ApiResponse<>("제품의 상세정보 입니다.", productService.getProduct(productId)));
+    }
+
+    @GetMapping("/v2/products/{productId}")
+    public ResponseEntity<ApiResponse<ProductResponseDto>> getProduct2(
+        @PathVariable(name = "productId") Long productId
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(new ApiResponse<>("제품의 상세정보 입니다.", productService.getProduct2(productId)));
     }
 
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<Slice<ProductListResponseDto>>> findCursorProductBySizeAndCategory(
-            @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "5") int size) {
+        @RequestParam(required = false) ProductCategory category,
+        @RequestParam(required = false) Long lastId,
+        @RequestParam(defaultValue = "5") int size) {
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse<>(category.getDisplayName() + " 목록 입니다.", productService.findCursorProductBySizeAndCategory(category, lastId, size)));
+            .status(HttpStatus.OK)
+            .body(new ApiResponse<>(category.getDisplayName() + " 목록 입니다.", productService.findCursorProductBySizeAndCategory(category, lastId, size)));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/products/{productId}")
     public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(
-            @AuthenticationPrincipal CustomUserDetail userDetail,
-            @PathVariable(name = "productId") Long productId,
-            @RequestBody ProductUpdateRequestDto productUpdateRequestDto
+        @AuthenticationPrincipal CustomUserDetail userDetail,
+        @PathVariable(name = "productId") Long productId,
+        @RequestBody ProductUpdateRequestDto productUpdateRequestDto
     ) {
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse<>("제품 정보를 수정하였습니다.", productService.updateProduct(userDetail, productId, productUpdateRequestDto)));
+            .status(HttpStatus.OK)
+            .body(new ApiResponse<>("제품 정보를 수정하였습니다.", productService.updateProduct(userDetail, productId, productUpdateRequestDto)));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<ApiResponse<Void>> deleteProduct(
-            @AuthenticationPrincipal CustomUserDetail userDetail,
-            @PathVariable(name = "productId") Long productId
+        @AuthenticationPrincipal CustomUserDetail userDetail,
+        @PathVariable(name = "productId") Long productId
     ) {
         productService.deleteProduct(userDetail, productId);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse<>("제품을 삭제했습니다."));
+            .status(HttpStatus.OK)
+            .body(new ApiResponse<>("제품을 삭제했습니다."));
     }
+
 }
