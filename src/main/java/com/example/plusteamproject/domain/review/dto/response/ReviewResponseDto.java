@@ -5,23 +5,31 @@ import com.example.plusteamproject.domain.review.entity.Review;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReviewResponseDto {
 
-    private final Long id;
+    // private final Long id;
+    private Long id;
 
-    private final Long userId;
+    // private final Long userId;
+    private Long userId;
 
-    private final Long productId;
+    // private final Long productId;
+    private Long productId;
 
-    private final Long orderId;
+    // private final Long orderId;
+    private Long orderId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private final String content;
+    // private final String content;
+    private String content;
 
-    private final int score;
+    // private final int score;
+    private int score;
 
     public ReviewResponseDto(Review review) {
         this.id = review.getId();

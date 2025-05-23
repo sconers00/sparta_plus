@@ -101,8 +101,7 @@ public class ProductService {
         if (!(userDetail.getUser().getId().equals(findProduct.getUser().getId()))) {
             throw new RuntimeException("해당 제품의 생성자만 삭제 가능합니다");
         }
-
-
+        
         findProduct.updateDeleteStatus(Status.NON_EXIST.isValue());
         productRepository.save(findProduct);
 
