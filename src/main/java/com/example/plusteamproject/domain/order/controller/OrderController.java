@@ -122,7 +122,7 @@ public class OrderController {
 	}
 
 	public void enumChecker(OrderStatusDto dto){
-		try{OrderStatus orderStatus =OrderStatus.valueOf(dto.getOrderStatus());
+		try{OrderStatus.valueOf(dto.getOrderStatus());
 		}catch(IllegalArgumentException e){
 			log.warn("주문상태 dto 내용 식별 실패. dto가 잘못 작성되었거나 검증로직 오류.");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);}
