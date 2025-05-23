@@ -45,8 +45,8 @@ public interface ReportRepository extends JpaRepository <Report, Long> {
 	SELECT new com.example.plusteamproject.domain.report.dto.ReportTypeCountDto(
 		r.reportType, COUNT(r))
 	FROM Report r
-	WHERE r.createdAt >= :weekly
+	WHERE r.createdAt >= :day
 	GROUP BY r.reportType
 	""")
-	List<ReportTypeCountDto> countByReportTypeWeekly(LocalDateTime weekly);
+	List<ReportTypeCountDto> countByReportTypeDaily(LocalDateTime day);
 }

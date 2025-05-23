@@ -56,5 +56,3 @@ public class Report extends BaseEntity {
 		this.setCreatedAt(createdAt);
 	}
 }
-
-// 해당 단어에 인덱스를 설정하고 그거를 검색하면

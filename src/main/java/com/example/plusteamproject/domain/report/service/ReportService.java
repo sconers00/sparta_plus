@@ -85,9 +85,9 @@ public class ReportService {
 	}
 
 	// 최근 일주일 간 신고 유형별 집계
-	public List<ReportTypeCountDto> countWeeklyReports() {
-		LocalDateTime weekly = LocalDateTime.now().minusDays(7);
-		return reportRepository.countByReportTypeWeekly(weekly);
+	public List<ReportTypeCountDto> countDailyReports() {
+		LocalDateTime daily = LocalDateTime.now().minusDays(1);
+		return reportRepository.countByReportTypeDaily(daily);
 	}
 
 	// 신고 삭제(철회)
@@ -120,7 +120,7 @@ public class ReportService {
 		Random random = new Random();
 		List<Report> reports = new ArrayList<>();
 
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 40000; i++) {
 			User reporter = users.get(random.nextInt(users.size()));
 			Product product = products.get(random.nextInt(products.size()));
 			ReportType randomType = types[random.nextInt(types.length)];
