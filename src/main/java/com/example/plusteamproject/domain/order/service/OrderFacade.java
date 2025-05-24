@@ -6,6 +6,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.plusteamproject.domain.order.dto.OrderRequestDto;
@@ -23,6 +24,7 @@ public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해�
 	private final OrderService orderService;
 	private final OrderRepository orderRepository;
 
+	@Transactional
 	public void createOrderRedis(OrderRequestDto dto, CustomUserDetail userDetail) {
 		RLock lock = redissonClient.getLock(String.format("orderInfo : %s %s", dto.getProductId().getId(),dto.getProductId().getName()));
 		try {
@@ -36,6 +38,8 @@ public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해�
 			lock.unlock();
 		}
 	}
+
+	@Transactional
 	public void updateOrderRedis(Long id,OrderRequestDto dto, CustomUserDetail userDetail) {
 		RLock lock = redissonClient.getLock(String.format("orderInfo : %s %s", dto.getProductId().getId(),dto.getProductId().getName()));
 		try {

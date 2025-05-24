@@ -87,7 +87,7 @@ public class OrderService {
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		order.update(dto, product.getPrice());
 	}
-	@Transactional
+	@Transactional(propagation =Propagation.REQUIRES_NEW)
 	public void updateOrderV2(Order order, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
 		User user = userDetail.getUser();
 		if(!Objects.equals(user.getId(),order.getUserId().getId()))
