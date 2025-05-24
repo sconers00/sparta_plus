@@ -54,7 +54,7 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<Slice<ProductListResponseDto>>> findCursorProductBySizeAndCategory(
-        @RequestParam(required = false) ProductCategory category,
+        @RequestParam() ProductCategory category,
         @RequestParam(required = false) Long lastId,
         @RequestParam(defaultValue = "5") int size) {
 

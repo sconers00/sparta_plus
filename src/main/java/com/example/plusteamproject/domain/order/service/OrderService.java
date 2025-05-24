@@ -32,13 +32,17 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
 
+	@Transactional
 	public OrderResponseDto saveOrder(OrderRequestDto dto, CustomUserDetail userDetail) {
 		User user = userDetail.getUser();
 		Product product = productRepository.findById(dto.getProductId().getId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+		if(product.getQuantity()<dto.getQuantity()){throw new ResponseStatusException(HttpStatus.BAD_REQUEST);}
 		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), product.getPrice().multiply(
 			BigDecimal.valueOf(dto.getQuantity())), dto.getAddress(), OrderStatus.valueOf("PENDING"), user,product);
+		Long remain = product.getQuantity()-dto.getQuantity();
+		ProductUpdateRequestDto productUpdateRequestDto = new ProductUpdateRequestDto(product.getCategory(),product.getName(),product.getContent(),product.getPrice(),remain);
+		product.update(productUpdateRequestDto);
 		orderRepository.save(order);
 		return orderReturn(order);
 	}
@@ -83,7 +87,7 @@ public class OrderService {
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		order.update(dto, product.getPrice());
 	}
-	@Transactional
+	@Transactional(propagation =Propagation.REQUIRES_NEW)
 	public void updateOrderV2(Order order, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
 		User user = userDetail.getUser();
 		if(!Objects.equals(user.getId(),order.getUserId().getId()))
