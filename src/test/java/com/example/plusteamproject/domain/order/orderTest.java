@@ -61,7 +61,7 @@ class IntegrationOrderTest {
 		CreateUserRequestDto UDto2= new CreateUserRequestDto("email2@test","name2","nick2","password2","010-1234-5679","USER");
 		User user2 = new User(UDto2,"password2");
 		userRepository.saveAndFlush(user2);
-		Product product = new Product(ProductCategory.valueOf("TOYS"),"test","testdesc",BigDecimal.valueOf(3000),5000L,user1);
+		Product product = Product.of(ProductCategory.valueOf("TOYS"),"test","testdesc",BigDecimal.valueOf(3000),5000L,user1);
 		productRepository.saveAndFlush(product);
 	}
 
