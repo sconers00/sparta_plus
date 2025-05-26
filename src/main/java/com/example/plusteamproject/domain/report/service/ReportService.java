@@ -1,9 +1,9 @@
 package com.example.plusteamproject.domain.report.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.plusteamproject.domain.product.entity.Product;
 import com.example.plusteamproject.domain.product.repository.ProductRepository;
+import com.example.plusteamproject.domain.report.dto.DailyReportsTypeResponseDto;
 import com.example.plusteamproject.domain.report.dto.ProductReportCountDto;
 import com.example.plusteamproject.domain.report.dto.ReportRequestDto;
 import com.example.plusteamproject.domain.report.dto.ReportResponseDto;
@@ -78,7 +79,7 @@ public class ReportService {
 	}
 
 
-	// 가장 많이 신고받은 제품 TOP 5 조회 <- 실제로 가장 많이 조회될 것 같은 기능이므로 인덱싱 선정!
+	// 가장 많이 신고받은 제품 TOP 5 조회
 	public List<ProductReportCountDto> GetTop5ReportedProducts(int limit) {
 		Pageable pageable = PageRequest.of(0, limit);
 		return reportRepository.findTop5ProductReportCounts(pageable);
@@ -89,7 +90,7 @@ public class ReportService {
 		LocalDateTime daily = LocalDateTime.now().minusDays(1);
 		return reportRepository.countByReportTypeDaily(daily);
 	}
-
+	
 	// 신고 삭제(철회)
 	@Transactional
 	public void deleteReport(Long id, CustomUserDetail userDetail) {
@@ -120,7 +121,7 @@ public class ReportService {
 		Random random = new Random();
 		List<Report> reports = new ArrayList<>();
 
-		for (int i = 0; i < 40000; i++) {
+		for (int i = 0; i < 60000; i++) {
 			User reporter = users.get(random.nextInt(users.size()));
 			Product product = products.get(random.nextInt(products.size()));
 			ReportType randomType = types[random.nextInt(types.length)];

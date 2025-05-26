@@ -22,6 +22,24 @@ Authorization: Bearer {{token}}
 GET {{baseUrl}}/products/1/reports
 Authorization: Bearer {{token}}
 
+
+### Top5 신고 제품 조회
+GET {{baseUrl}}/products/reports/top5
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### 당일 신고 유형별 횟수 집계
+GET {{baseUrl}}/reports/daily
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### 신고 더미 데이터 생성
+POST {{baseUrl}}/reports/dummies
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
 ### 신고 삭제
 DELETE {{baseUrl}}/reports/1
 Authorization: Bearer {{token}}
