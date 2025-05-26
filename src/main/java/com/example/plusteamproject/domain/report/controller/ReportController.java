@@ -79,78 +79,16 @@ public class ReportController {
 			.body(new ApiResponse<>("가장 많이 신고받은 제품 TOP 5 조회목록입니다.", reportService.GetTop5ReportedProducts(5)));
 	}
 
-	// 최근 일주일 간 신고 유형별 집계 - -indexing 미 적용
+	// 최근 일주일 간 신고 유형별 집계(Indexing)
 	@GetMapping("/reports/daily")
 	public ResponseEntity<?> getDailyReportType(){
-
-		long start = System.currentTimeMillis();
 		List<ReportTypeCountDto> result = reportService.countDailyReports();
-		long end = System.currentTimeMillis();
-		long runTime = end - start;
+
 
 		return ResponseEntity
 			.status(HttpStatus.OK)
-			.body(new ApiResponse<>("최근 일주일 간 신고 유형별 집계 내역입니다. Indexing 미 적용 응답 시간 : " + runTime +"ms", result));
+			.body(new ApiResponse<>("오늘 접수된 신고 유형별 집계 내역입니다.", result));
 	}
-
-	// 최근 일주일 간 신고 유형별 집계 -indexing 적용
-	@GetMapping("/reports/daily-indexing")
-	public ResponseEntity<?> getDailyReportTypeByIndexing(){
-
-		long start = System.currentTimeMillis();
-		List<ReportTypeCountDto> result = reportService.countDailyReports();
-		long end = System.currentTimeMillis();
-		long runTime = end - start;
-
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(new ApiResponse<>("최근 일주일 간 신고 유형별 집계 내역입니다. Indexing 적용 응답 시간 : " + runTime +"ms", result));
-	}
-
-	/** Indexing DDL 쿼리
-	 성능 실험 (탐색 필드 수 및 인덱싱 적용 여부 확인 가능)
-	 EXPLAIN
-	 SELECT report_type, COUNT(*)
-	 FROM reports
-	 WHERE created_at >= NOW() - INTERVAL 1DAY
-	 GROUP BY report_type;
-
-	 index 생성 / 삭제
-	 CREATE INDEX idx_report_created_type ON plusteamproject.reports(created_at, report_type);
-	 DROP INDEX idx_report_created_type ON plusteamproject.reports;
-	 */
-
-
-	// 하루동안 접수된 신고 조회(신고유형만) - Indexing 성능 확인용 - RequesParam ver
-	@GetMapping("/reports/daily/search")
-	public ResponseEntity<?> getDailyReportByIndexing(
-		@RequestParam("day") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate day,
-		@RequestParam("type") ReportType reportType) {
-
-		long start = System.currentTimeMillis();
-		List<DailyReportsTypeResponseDto> result = reportService.GetDailyReportsType(day, reportType);
-		long end = System.currentTimeMillis();
-		long runTime = end - start;
-
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(new ApiResponse<>("해당 날짜에 접수된 선택하신 신고 유형 목록입니다. Indexing 적용 응답 시간 : " + runTime +"ms", result));
-	}
-
-	// 하루동안 접수된 신고 조회(신고유형만) - Indexing 성능 확인용 - nO RequesParam ver
-	@GetMapping("/reports/daily/search-noparam")
-	public ResponseEntity<?> getDailyReportByIndexing() {
-
-		long start = System.currentTimeMillis();
-		List<DailyReportsTypeResponseDto> result = reportService.GetDailyReportsTypeNoParam();
-		long end = System.currentTimeMillis();
-		long runTime = end - start;
-
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(new ApiResponse<>("해당 날짜에 접수된 선택하신 신고 유형 목록입니다. Indexing 적용 응답 시간 : " + runTime +"ms", result));
-	}
-
 
 	// 신고 취소
 	@DeleteMapping("/reports/{id}")

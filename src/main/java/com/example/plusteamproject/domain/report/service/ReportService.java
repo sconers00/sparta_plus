@@ -90,19 +90,7 @@ public class ReportService {
 		LocalDateTime daily = LocalDateTime.now().minusDays(1);
 		return reportRepository.countByReportTypeDaily(daily);
 	}
-
-	// INDEXING 실험- PARAM 입력
-	public List<DailyReportsTypeResponseDto> GetDailyReportsType(LocalDate day, ReportType reportType) {
-		LocalDateTime date = day.atStartOfDay();
-		return reportRepository.getDailyReportsType(date, reportType);
-	}
-	// INDEXING 실험- PARAM 주입
-	public List<DailyReportsTypeResponseDto> GetDailyReportsTypeNoParam() {
-		LocalDateTime daily = LocalDateTime.now().minusDays(1);
-		ReportType reportType = ReportType.FRAUD;
-		return reportRepository.getDailyReportsType(daily, reportType);
-	}
-
+	
 	// 신고 삭제(철회)
 	@Transactional
 	public void deleteReport(Long id, CustomUserDetail userDetail) {
@@ -133,7 +121,7 @@ public class ReportService {
 		Random random = new Random();
 		List<Report> reports = new ArrayList<>();
 
-		for (int i = 0; i < 40000; i++) {
+		for (int i = 0; i < 60000; i++) {
 			User reporter = users.get(random.nextInt(users.size()));
 			Product product = products.get(random.nextInt(products.size()));
 			ReportType randomType = types[random.nextInt(types.length)];
