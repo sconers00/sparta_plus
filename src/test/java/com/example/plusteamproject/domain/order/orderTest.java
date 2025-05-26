@@ -51,7 +51,7 @@ class IntegrationOrderTest {
 	@Autowired
 	UserRepository userRepository;
 
-	private final Integer CONCURRENT_COUNT = 64;
+	private final Integer CONCURRENT_COUNT = 100;
 
 	@BeforeEach
 	public void before() {
@@ -61,7 +61,7 @@ class IntegrationOrderTest {
 		CreateUserRequestDto UDto2= new CreateUserRequestDto("email2@test","name2","nick2","password2","010-1234-5679","USER");
 		User user2 = new User(UDto2,"password2");
 		userRepository.saveAndFlush(user2);
-		Product product = new Product(ProductCategory.valueOf("TOYS"),"test","testdesc",BigDecimal.valueOf(3000),5000L,user1);
+		Product product = Product.of(ProductCategory.valueOf("TOYS"),"test","testdesc",BigDecimal.valueOf(3000),5000L,user1);
 		productRepository.saveAndFlush(product);
 	}
 
@@ -75,7 +75,7 @@ class IntegrationOrderTest {
 	private void DoOrderTest(Consumer<Void> action) throws InterruptedException {
 		Long originQuantity = productRepository.findById(1L).orElseThrow().getQuantity();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(16);
+		ExecutorService executorService = Executors.newFixedThreadPool(32);
 		CountDownLatch latch = new CountDownLatch(CONCURRENT_COUNT);
 
 		for (int i = 0; i < CONCURRENT_COUNT; i++) {
