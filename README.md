@@ -45,7 +45,7 @@
 ---
 ## 🗂️ ERD
 
-![ERD](images/ERD.png)
+![ERD](images/erd.png)
 
 ---
 ## 🗂️ API

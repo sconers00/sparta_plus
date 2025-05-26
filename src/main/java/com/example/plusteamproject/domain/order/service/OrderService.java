@@ -32,22 +32,8 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
 
-	@Transactional
-	public OrderResponseDto saveOrder(OrderRequestDto dto, CustomUserDetail userDetail) {
-		User user = userDetail.getUser();
-		Product product = productRepository.findById(dto.getProductId().getId())
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		if(product.getQuantity()<dto.getQuantity()){throw new ResponseStatusException(HttpStatus.BAD_REQUEST);}
-		Order order = new Order(dto.getPaymentMethod(), dto.getQuantity(), product.getPrice().multiply(
-			BigDecimal.valueOf(dto.getQuantity())), dto.getAddress(), OrderStatus.valueOf("PENDING"), user,product);
-		Long remain = product.getQuantity()-dto.getQuantity();
-		ProductUpdateRequestDto productUpdateRequestDto = new ProductUpdateRequestDto(product.getCategory(),product.getName(),product.getContent(),product.getPrice(),remain);
-		product.update(productUpdateRequestDto);
-		orderRepository.save(order);
-		return orderReturn(order);
-	}
 	@Transactional(propagation = Propagation.REQUIRES_NEW)//
-	public void saveOrderV2(OrderRequestDto dto, CustomUserDetail userDetail) {
+	public void saveOrder(OrderRequestDto dto, CustomUserDetail userDetail) {
 		User user = userDetail.getUser();
 		Product product = productRepository.findById(dto.getProductId().getId())
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -75,20 +61,8 @@ public class OrderService {
 		return orderReturn(order);
 	}
 
-	@Transactional
-	public void updateOrder(Long orderId, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
-		User user = userDetail.getUser();
-		Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		if(!Objects.equals(user.getId(),order.getUserId().getId()))
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		if(!order.getOrderStatus().equals(OrderStatus.valueOf("PENDING")))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);//주문이 대기중이 아니라면 수정 불가.
-		Product product = productRepository.findById(dto.getProductId().getId())
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		order.update(dto, product.getPrice());
-	}
 	@Transactional(propagation =Propagation.REQUIRES_NEW)
-	public void updateOrderV2(Order order, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
+	public void updateOrder(Order order, OrderRequestDto dto, CustomUserDetail userDetail) {//수정기
 		User user = userDetail.getUser();
 		if(!Objects.equals(user.getId(),order.getUserId().getId()))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);

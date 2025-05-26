@@ -75,7 +75,7 @@ class IntegrationOrderTest {
 	private void DoOrderTest(Consumer<Void> action) throws InterruptedException {
 		Long originQuantity = productRepository.findById(1L).orElseThrow().getQuantity();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(32);
+		ExecutorService executorService = Executors.newFixedThreadPool(16);
 		CountDownLatch latch = new CountDownLatch(CONCURRENT_COUNT);
 
 		for (int i = 0; i < CONCURRENT_COUNT; i++) {
@@ -111,7 +111,7 @@ class IntegrationOrderTest {
 		CustomUserDetail userDetail = new CustomUserDetail(user2);
 		Product product = productRepository.findById(1L).orElseThrow(Exception::new);
 		OrderRequestDto dto=new OrderRequestDto("Method",1L,"address",product);
-		DoOrderTest((_no) -> orderController.createOrderV3(dto, userDetail));
+		DoOrderTest((_no) -> orderController.createOrder(dto, userDetail));
 	}
 
 }
