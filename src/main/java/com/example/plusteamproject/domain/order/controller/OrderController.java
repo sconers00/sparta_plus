@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrderController {
 	private final OrderService orderService;
-	// private final NamedLockOrder namedLockOrder;
 	private final OrderFacade orderFacade;
 	@PostMapping//일반(락없음)
 	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
@@ -46,13 +45,6 @@ public class OrderController {
 			.status(HttpStatus.CREATED)
 			.body(new ApiResponse<>("주문이 완료되었습니다.", orderResponseDto));
 	}
-	// @PostMapping("/v2")//네임드락을 통한 분산락
-	// public ResponseEntity<ApiResponse<Void>> createOrderV2(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
-	// 	namedLockOrder.getOrderLock(dto, userDetail);
-	// 	return ResponseEntity
-	// 		.status(HttpStatus.CREATED)
-	// 		.body(new ApiResponse<>("주문이 완료되었습니다."));
-	// }
 	@PostMapping("/v3")//redisson을 통한 분산락
 	public ResponseEntity<ApiResponse<Void>> createOrderV3(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		orderFacade.createOrderRedis(dto, userDetail);
@@ -81,13 +73,6 @@ public class OrderController {
 			.body(new ApiResponse<>("주문이 수정되었습니다."));
 	}
 
-	// @PatchMapping("/v2/{order_id}")//네임드락을 통한 분산락
-	// public ResponseEntity<ApiResponse<Void>> updateOrderV2(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
-	// 	namedLockOrder.getOrderLocks(order_id, dto,userDetail);
-	// 	return ResponseEntity
-	// 		.status(HttpStatus.OK)
-	// 		.body(new ApiResponse<>("주문이 수정되었습니다."));
-	// }
 	@PatchMapping("/v3/{order_id}")//redisson을 통한 분산락
 	public ResponseEntity<ApiResponse<Void>> updateOrderV3(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		orderFacade.updateOrderRedis(order_id, dto,userDetail);
