@@ -75,7 +75,7 @@ class IntegrationOrderTest {
 	private void DoOrderTest(Consumer<Void> action) throws InterruptedException {
 		Long originQuantity = productRepository.findById(1L).orElseThrow().getQuantity();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(32);
+		ExecutorService executorService = Executors.newFixedThreadPool(16);
 		CountDownLatch latch = new CountDownLatch(CONCURRENT_COUNT);
 
 		for (int i = 0; i < CONCURRENT_COUNT; i++) {
