@@ -111,7 +111,7 @@ class IntegrationOrderTest {
 		CustomUserDetail userDetail = new CustomUserDetail(user2);
 		Product product = productRepository.findById(1L).orElseThrow(Exception::new);
 		OrderRequestDto dto=new OrderRequestDto("Method",1L,"address",product);
-		DoOrderTest((_no) -> orderController.createOrderV3(dto, userDetail));
+		DoOrderTest((_no) -> orderController.createOrder(dto, userDetail));
 	}
 
 }

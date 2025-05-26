@@ -31,7 +31,7 @@ public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해�
 			if (!lock.tryLock(20, 1, TimeUnit.SECONDS)) {
 				System.out.println("락 획득 대기 시간이 만료되었습니다.");
 			}
-			orderService.saveOrderV2(dto,userDetail);
+			orderService.saveOrder(dto,userDetail);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -48,7 +48,7 @@ public class OrderFacade {//redisson. 네임드락을 사용시 주석처리해�
 			}
 			Order order = orderRepository.findById(id).orElseThrow(
 				()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-			orderService.updateOrderV2(order, dto, userDetail);
+			orderService.updateOrder(order, dto, userDetail);
 		} catch (InterruptedException e) {
 			throw new RuntimeException("인터럽트 발생",e);
 		} catch (ResponseStatusException e){

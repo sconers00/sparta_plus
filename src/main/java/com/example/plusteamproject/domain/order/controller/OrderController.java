@@ -38,15 +38,9 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderController {
 	private final OrderService orderService;
 	private final OrderFacade orderFacade;
-	@PostMapping//일반(락없음)
-	public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
-		OrderResponseDto orderResponseDto = orderService.saveOrder(dto, userDetail);
-		return ResponseEntity
-			.status(HttpStatus.CREATED)
-			.body(new ApiResponse<>("주문이 완료되었습니다.", orderResponseDto));
-	}
-	@PostMapping("/v3")//redisson을 통한 분산락
-	public ResponseEntity<ApiResponse<Void>> createOrderV3(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+
+	@PostMapping()//redisson을 통한 분산락
+	public ResponseEntity<ApiResponse<Void>> createOrder(@Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		orderFacade.createOrderRedis(dto, userDetail);
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
@@ -65,16 +59,8 @@ public class OrderController {
 		return new ResponseEntity<>(dto,HttpStatus.OK);
 	}
 
-	@PatchMapping("/{order_id}")
-	public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
-		orderService.updateOrder(order_id, dto,userDetail);
-		return ResponseEntity
-			.status(HttpStatus.OK)
-			.body(new ApiResponse<>("주문이 수정되었습니다."));
-	}
-
 	@PatchMapping("/v3/{order_id}")//redisson을 통한 분산락
-	public ResponseEntity<ApiResponse<Void>> updateOrderV3(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
+	public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Long order_id, @Valid @RequestBody OrderRequestDto dto, @AuthenticationPrincipal CustomUserDetail userDetail){
 		orderFacade.updateOrderRedis(order_id, dto,userDetail);
 		return ResponseEntity
 			.status(HttpStatus.OK)
